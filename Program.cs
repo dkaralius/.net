@@ -61,6 +61,7 @@ namespace Assignment1
                 }
             }
 
+
             //Sort by Name, in ascending order(default)
             public int CompareTo(Object alpha)
             {
@@ -81,13 +82,23 @@ namespace Assignment1
             }
 
         }
-        public class Subreddit : IComparable //, IEnumerable
+        public class Subreddit : IComparable//,IEnumerable
         {
             readonly uint id;
             string name;
             uint members;
             uint active;
             SortedSet<Post> subPosts;
+
+            public uint ID
+            {
+                get
+                {
+                    return this.id;
+                }
+            }
+
+            public string Name { get => name; }
 
             //Default Constructor
             public Subreddit()
@@ -125,6 +136,11 @@ namespace Assignment1
                     active = Convert.ToUInt32(args[3]);
                 }
             }
+            //Overriden ToString() method
+            public override string ToString()
+            {
+                return String.Format("        <{0}> {1} -- ({2}/{3})", id, name, active, members);
+            }
 
             public int CompareTo(Object alpha)
             {
@@ -137,12 +153,12 @@ namespace Assignment1
                 else
                     throw new ArgumentException("argument was not a name.");
             }
+            
             /*
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return (IEnumerable) GetEnumerator();
+                return (IEnumerator) GetEnumerator();
             }
-
             public SubEnum GetEnumerator()
             {
                 return new SubEnum(subPosts);
@@ -164,7 +180,7 @@ namespace Assignment1
             public bool MoveNext()
             {
                 position++;
-                return (position < subPosts.Length);
+                return (position < subPosts.Count);
             }
 
             public void Reset()
@@ -180,22 +196,21 @@ namespace Assignment1
                 }
             }
 
-            public SubReddit Current
+             public Subreddit Current
             {
                 get
                 {
                     try
                     {
-                        return subPosts[position];
+                        return subPosts.ElementAt(position);
                     }
                     catch (IndexOutOfRangeException)
                     {
                         throw new InvalidOperationException();
                     }
                 }
-            }
+            }*/
         }
-        */
             public class Post : IComparable//, IEnumerable
             {
                 readonly uint id;
@@ -211,6 +226,7 @@ namespace Assignment1
 
                 //Properties
                 public uint Score { get => upVotes - downVotes; }
+                public uint subHOME { get => subHome; }
                 public uint PostRating
                 {
                     get
@@ -302,13 +318,17 @@ namespace Assignment1
                     Post rightOp = alpha as Post;
 
                     if (rightOp != null)
-                        return PostRating.CompareTo(rightOp.PostRating);
+                        return rightOp.PostRating.CompareTo(PostRating);
                     else
                         throw new ArgumentException("argument was not a student");
                 }
                 /*
                  * IEnumberable
                  */
+                public override string ToString()
+                {
+                    return String.Format("        <{0}> [] ({1}) {2} ... {3} - {4} |{5}|", id, Score, title, postContent, authorID,timeStamp);
+                }
             }
 
             public class Comment : IComparable //, IEnumerable
@@ -433,7 +453,6 @@ namespace Assignment1
                         {
                             tokens = slacker.Split('\t');
                             subreddits.Add(new Subreddit(tokens));
-
                             slacker = inFile.ReadLine();
                         }
                     }
@@ -455,7 +474,8 @@ namespace Assignment1
                         {
                             tokens = slacker.Split('\t');
                             subPosts.Add(new Post(tokens));
-
+                            Console.WriteLine("Add entry:" + tokens[0]);
+                            Console.WriteLine(subPosts.Count());
                             slacker = inFile.ReadLine();
                         }
                     }
@@ -515,13 +535,10 @@ namespace Assignment1
 
                 ReadInputFiles(users, subreddits, subPosts, comments);
 
-                foreach(User i in users)
-                {
-                    Console.WriteLine(i.ToString());
-                }
                 string input;
                 string[] options = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "q", "Q", "e", "E", "quit", "exit" };
                 string[] exitCondition = { "q", "Q", "e", "E", "quit", "exit" };
+
 
                 do
                 {
@@ -534,19 +551,41 @@ namespace Assignment1
                         Console.WriteLine("Please enter a valid input!");
                     }
 
-                    switch(input)
+                    switch (input)
                     {
                         case "1":
                             Console.Clear();
-                            Console.WriteLine("You've entered: 1");
+                            Console.WriteLine("Name -- (Active Members / Total Members)");
+                            Console.WriteLine("");
+
+                            foreach (Subreddit i in subreddits)
+                            {
+                                Console.WriteLine(i.ToString());
+                            }
                             break;
+
                         case "2":
                             Console.Clear();
-                            Console.WriteLine("You've entered: 2");
+                            Console.WriteLine("<ID> [Subreddit] (Score) Title + PostContent - PosterName |TimeStamp|");
+                            Console.WriteLine("");
+
+                            foreach (Post i in subPosts)
+                            {
+                                Console.WriteLine(i.ToString());
+                            }
                             break;
+
                         case "3":
                             Console.Clear();
-                            Console.WriteLine("You've entered: 3");
+                            Console.Write("Enter the name of the Subreddit to list from: ");
+                            input = Console.ReadLine();
+
+                            if (!subreddits.Any(x => x.Name == input))
+                            {
+                                Console.WriteLine("Invalid entry! Returning to main menu!");
+                                System.Threading.Thread.Sleep(2000);
+                                Console.Clear();
+                            }
                             break;
                         case "4":
                             Console.Clear();
@@ -582,4 +621,3 @@ namespace Assignment1
             }
         }
     }
-}
