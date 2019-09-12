@@ -11,7 +11,7 @@ namespace Program_1
     class Program
     {
 
-        class User : IComparable
+        public class User : IComparable
         {
             // private variables
             private readonly uint id;
