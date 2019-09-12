@@ -825,11 +825,14 @@ namespace Assignment1
                             Console.Clear();
                             Console.WriteLine("You've entered: 8");
                             break;
+                        //Case where user wants to quit using prompt on main menu.
                         case "9":
-                            Console.Clear();
-                            Console.WriteLine("You've entered: 9");
+                            Console.Write("Closing Reddit...");
+                            System.Threading.Thread.Sleep(2000);
+                            Console.WriteLine("");
+                            Environment.Exit(1);
                             break;
-                    }
+                }
                 } while (!exitCondition.Any(x => x == input));
 
                 Console.Write("Closing Reddit...");
