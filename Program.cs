@@ -1,53 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.Linq;
+using System.IO;
+using System.Collections;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
 
-namespace Assignment1
+namespace Program_1
 {
     class Program
     {
+
         public class User : IComparable
         {
+            // private variables
             private readonly uint id;
             private readonly string name;
-            private int commentScore;
             private int postScore;
+            private int commentScore;
 
-            public uint ID { get => id; }
+            // public properties
+            public uint Id { get => id; }
             public string Name { get => name; }
             public int PostScore { get => postScore; set => postScore = value; }
             public int CommentScore { get => commentScore; set => commentScore = value; }
             public int TotalScore { get => (CommentScore + PostScore); }
 
-            //Default Constructor
+            // default constructor
             public User()
             {
                 id = 0;
                 name = "";
-                commentScore = 0;
                 postScore = 0;
+                commentScore = 0;
             }
 
-            //Alternate Constructor if provided all arguements for the user
-            public User(uint id, string name, int commentScore, int postScore)
+            // all arguments provided constructor
+            public User(uint id, string name, int postScore, int commentScore)
             {
                 this.id = id;
                 this.name = name;
-                this.commentScore = commentScore;
                 this.postScore = postScore;
+                this.commentScore = commentScore;
             }
 
-            //Alternate Constructor if provided only ID and username for the user
+            // only name and id provided
             public User(uint id, string name)
             {
                 this.id = id;
                 this.name = name;
-                commentScore = 0;
                 postScore = 0;
+                commentScore = 0;
+            }
+
+            // override CompareTo to sort by name
+            public int CompareTo(Object alpha)
+            {
+                // check that alpha isnt empty
+                if (alpha == null)
+                {
+                    throw new ArgumentNullException("Empty user.");
+                }
+                User rightOp = alpha as User;
+
+                if (rightOp != null) // typecast worked
+                    return Name.CompareTo(rightOp.Name);
+                else
+                    throw new ArgumentException("Argument was not a user.");
             }
 
             public User(string[] args)
@@ -57,48 +76,44 @@ namespace Assignment1
                     id = Convert.ToUInt32(args[0]);
                     name = args[1];
                     postScore = Convert.ToInt32(args[2]);
-                    CommentScore = Convert.ToInt32(args[3]);
+                    commentScore = Convert.ToInt32(args[3]);
                 }
             }
 
-
-            //Sort by Name, in ascending order(default)
-            public int CompareTo(Object alpha)
-            {
-                if (alpha == null) throw new ArgumentNullException("argument bad");
-
-                User rightOp = alpha as User;
-
-                if (rightOp != null)
-                    return name.CompareTo(rightOp.name);
-                else
-                    throw new ArgumentException("argument was not a name.");
-            }
-
-            //Overriden ToString() method
             public override string ToString()
             {
                 return String.Format("User: {1}({0}) has a post score of {2} and comment score of {3}", id, name, postScore, commentScore);
             }
-
         }
+
         public class Subreddit : IComparable, IEnumerable
         {
-            readonly uint id;
+            private readonly uint id;
             private string name;
             private uint members;
             private uint active;
-            private SortedSet<Subreddit> subPosts;
-            private SortedSet<Post> subPosts1;
+            SortedSet<Post> subPosts;
 
-            public uint ID { get => id; }
+            // properties
+            public uint Id => id;
             public string Name
             {
                 get { return name; }
                 set { name = value; }
             }
+            public uint Members
+            {
+                get { return members; }
+                set { members = value; }
+            }
+            public uint Active
+            {
+                get { return active; }
+                set { active = value; }
+            }
 
-            //Default Constructor
+
+            // default
             public Subreddit()
             {
                 id = 0;
@@ -107,7 +122,7 @@ namespace Assignment1
                 active = 0;
             }
 
-            //Alternate Constructor if provided all arguements for the user
+            // alternate construct
             public Subreddit(uint id, string name, uint members, uint active)
             {
                 this.id = id;
@@ -116,7 +131,7 @@ namespace Assignment1
                 this.active = active;
             }
 
-            //Alternate Constructor if provided only ID and username for the user
+            // name and id construct
             public Subreddit(uint id, string name)
             {
                 this.id = id;
@@ -124,6 +139,7 @@ namespace Assignment1
                 members = 0;
                 active = 0;
             }
+
             public Subreddit(string[] args)
             {
                 if (args.Length == 4)
@@ -133,11 +149,6 @@ namespace Assignment1
                     members = Convert.ToUInt32(args[2]);
                     active = Convert.ToUInt32(args[3]);
                 }
-            }
-            //Overriden ToString() method
-            public override string ToString()
-            {
-                return String.Format("        <{0}> {1} -- ({2}/{3})", id, name, active, members);
             }
 
             public int CompareTo(Object alpha)
@@ -151,340 +162,273 @@ namespace Assignment1
                 else
                     throw new ArgumentException("argument was not a name.");
             }
-            
+
+            // Implementation for the GetEnumerator method.
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return (IEnumerator) GetEnumerator();
+                return (IEnumerator)GetEnumerator();
             }
+
             public SubEnum GetEnumerator()
             {
                 return new SubEnum(subPosts.ToArray());
             }
         }
-        public class SubEnum : IEnumerator
-        {
-            public Subreddit[] _subreddits;
-
-            // Enumerators are positioned before the first element
-            // until the first MoveNext() call.
-            int position = -1;
-
-            public SubEnum(Subreddit[] list)
-            {
-                _subreddits = list;
-            }
-
-            public bool MoveNext()
-            {
-                position++;
-                return (position < _subreddits.Length);
-            }
-
-            public void Reset()
-            {
-                position = -1;
-            }
-
-            object IEnumerator.Current
-            {
-                get
-                {
-                    return Current;
-                }
-            }
-
-             public Subreddit Current
-            {
-                get
-                {
-                    try
-                    {
-                        return _subreddits[position];
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        throw new InvalidOperationException();
-                    }
-                }
-            }
-        }
+       
         public class Post : IComparable, IEnumerable
         {
-           readonly uint id;
-           string title;
-           readonly uint authorID;
-           string postContent;
-           readonly uint subHome;
-           uint upVotes;
-           uint downVotes;
-           uint weight;
-           readonly DateTime timeStamp;
-
-           SortedSet<Post> postComments;
+            readonly uint id;
+            string title;
+            readonly uint authorID;
+            string postContent;
+            readonly uint subHome;
+            uint upVotes;
+            uint downVotes;
+            uint weight;
+            readonly DateTime timeStamp;
+            SortedSet<Comment> postComments;
 
             //Properties
-           public uint Score { get => upVotes - downVotes; }
-           public uint subHOME { get => subHome; }
-           public uint ID { get => id; }
-           public string Title { get => title; }
-           public string PostContent { get => postContent; }
-           public uint AuthorID { get => authorID; }
-           public DateTime TimeStamp { get => timeStamp; }
-
+            public uint Id => id;
+            public string Title
+            {
+                get { return title; }
+                set { title = value; }
+            }
+            public uint AuthorID => authorID;
+            public string PostContent
+            {
+                get { return postContent; }
+                set { postContent = value; }
+            }
+            public uint SubHome => subHome;
+            public uint UpVotes
+            {
+                get { return upVotes; }
+                set { upVotes = value; }
+            }
+            public uint DownVotes
+            {
+                get { return downVotes; }
+                set { downVotes = value; }
+            }
+            public uint Weight
+            {
+                get { return weight; }
+                set { weight = value; }
+            }
+            public uint Score { get => upVotes - downVotes; }
             public uint PostRating
+            {
+                get
                 {
-                    get
+                    if (weight == 0)
                     {
-                        if (weight == 0)
-                        {
-                            return Score;
-                        }
-                        if (weight == 1)
-                        {
-                            return Score * (2 / 3);
-                        }
-                        if (weight == 2)
-                        {
-                            return 0;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("Invalid argument");
-                        }
+                        return Score;
+                    }
+                    if (weight == 1)
+                    {
+                        return Score * (2 / 3);
+                    }
+                    if (weight == 2)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Invalid argument");
                     }
                 }
+            }
 
-           //Default Constructor
-           public Post()
-                {
-                    id = 0;
-                    authorID = 0;
-                    title = "";
-                    postContent = "";
-                    subHome = 0;
-                    upVotes = 0;
-                    downVotes = 0;
-                    weight = 0;
-                    timeStamp = new DateTime(0, 0, 0, 0, 0, 0);
-                }
-           //Alternate Constructor if provided all arguements for the user
-           public Post(uint id, uint authorID, string title, string postContent, uint subHome, uint upVotes, uint downVotes, uint weight, int year, int month, int day, int hour, int minute, int second)
-                {
-                    this.id = id;
-                    this.authorID = authorID;
-                    this.title = title;
-                    this.postContent = postContent;
-                    this.subHome = subHome;
-                    this.upVotes = upVotes;
-                    this.downVotes = downVotes;
-                    this.weight = weight;
-                    this.timeStamp = new DateTime(year, month, day, hour, minute, second);
-                }
-           //Alternate Constructor if provided only a title, authorID, postContent, and subHome
-           public Post(uint id, uint authorID, string title, string postContent, uint subHome)
-                {
-                    this.id = id;
-                    this.authorID = authorID;
-                    this.title = title;
-                    this.postContent = postContent;
-                    this.subHome = subHome;
-                    this.upVotes = 1;
-                    this.downVotes = 0;
-                }
-           public Post(string[] args)
-                {
-                    if (args.Length == 14)
-                    {
-                        id = Convert.ToUInt32(args[0]);
-                        authorID = Convert.ToUInt32(args[1]);
-                        title = Convert.ToString(args[2]);
-                        postContent = Convert.ToString(args[3]);
-                        subHome = Convert.ToUInt32(args[4]);
-                        upVotes = Convert.ToUInt32(args[5]);
-                        downVotes = Convert.ToUInt32(args[6]);
-                        weight = Convert.ToUInt32(args[7]);
+            public DateTime TimeStamp => timeStamp;
 
-                        int year = Convert.ToInt32(args[8]);
-                        int month = Convert.ToInt32(args[9]);
-                        int day = Convert.ToInt32(args[10]);
-                        int hour = Convert.ToInt32(args[11]);
-                        int minute = Convert.ToInt32(args[12]);
-                        int second = Convert.ToInt32(args[13]);
+            //Default Constructor
+            public Post()
+            {
+                id = 0;
+                authorID = 0;
+                title = "";
+                postContent = "";
+                subHome = 0;
+                upVotes = 0;
+                downVotes = 0;
+                weight = 0;
+                timeStamp = new DateTime(0, 0, 0, 0, 0, 0);
+            }
+            //Alternate Constructor if provided all arguements for the user
+            public Post(uint id, uint authorID, string title, string postContent, uint subHome, uint upVotes, uint downVotes, uint weight, int year, int month, int day, int hour, int minute, int second)
+            {
+                this.id = id;
+                this.authorID = authorID;
+                this.title = title;
+                this.postContent = postContent;
+                this.subHome = subHome;
+                this.upVotes = upVotes;
+                this.downVotes = downVotes;
+                this.weight = weight;
+                this.timeStamp = new DateTime(year, month, day, hour, minute, second);
+            }
+            //Alternate Constructor if provided only a title, authorID, postContent, and subHome
+            public Post(uint id, uint authorID, string title, string postContent, uint subHome)
+            {
+                this.id = id;
+                this.authorID = authorID;
+                this.title = title;
+                this.postContent = postContent;
+                this.subHome = subHome;
+                this.upVotes = 1;
+                this.downVotes = 0;
+            }
 
-                        timeStamp = new DateTime(year, month, day, hour, minute, second);
-                    }
+            public Post(string[] args)
+            {
+                if (args.Length == 14)
+                {
+                    id = Convert.ToUInt32(args[0]);
+                    authorID = Convert.ToUInt32(args[1]);
+                    title = Convert.ToString(args[2]);
+                    postContent = Convert.ToString(args[3]);
+                    subHome = Convert.ToUInt32(args[4]);
+                    upVotes = Convert.ToUInt32(args[5]);
+                    downVotes = Convert.ToUInt32(args[6]);
+                    weight = Convert.ToUInt32(args[7]);
+
+                    int year = Convert.ToInt32(args[8]);
+                    int month = Convert.ToInt32(args[9]);
+                    int day = Convert.ToInt32(args[10]);
+                    int hour = Convert.ToInt32(args[11]);
+                    int minute = Convert.ToInt32(args[12]);
+                    int second = Convert.ToInt32(args[13]);
+
+                    timeStamp = new DateTime(year, month, day, hour, minute, second);
                 }
-           public int CompareTo(Object alpha)
-           {
+            }
+            public int CompareTo(Object alpha)
+            {
                 if (alpha == null) throw new ArgumentNullException("argument bad");
 
                 Post rightOp = alpha as Post;
 
                 if (rightOp != null)
-                     return rightOp.PostRating.CompareTo(PostRating);
+                    return PostRating.CompareTo(rightOp.PostRating);
                 else
-                     throw new ArgumentException("argument was not a student");
-           }
-           public override string ToString()
-           {
-                return String.Format("        <{0}> [] ({1}) {2} ... {3} - {4} |{5}|", id, Score, title, postContent, authorID, timeStamp);
-           }
-           /*
-            * IEnumberable
-            */
-           IEnumerator IEnumerable.GetEnumerator()
-           {
-              return (IEnumerator)GetEnumerator();
-           }
-           public PostEnum GetEnumerator()
-           {
-              return new PostEnum(postComments.ToArray());
-           }
+                    throw new ArgumentException("argument was not a student");
+            }
+
+            // Implementation for the GetEnumerator method.
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return (IEnumerator)GetEnumerator();
+            }
+
+            public PostEnum GetEnumerator()
+            {
+                return new PostEnum(postComments.ToArray());
+            }
+
         }
-        public class PostEnum : IEnumerator
-        {
-            public Post[] _posts;
 
-            // Enumerators are positioned before the first element
-            // until the first MoveNext() call.
-            int position = -1;
-
-            public PostEnum(Post[] list)
-            {
-                _posts = list;
-            }
-
-            public bool MoveNext()
-            {
-                position++;
-                return (position < _posts.Length);
-            }
-
-            public void Reset()
-            {
-                position = -1;
-            }
-
-            object IEnumerator.Current
-            {
-                get
-                {
-                    return Current;
-                }
-            }
-
-            public Post Current
-            {
-                get
-                {
-                    try
-                    {
-                        return _posts[position];
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        throw new InvalidOperationException();
-                    }
-                }
-            }
-        }
         public class Comment : IComparable, IEnumerable
         {
-           readonly uint id;
-           readonly uint authorID;
-           string content;
-           readonly uint parentID;
-           uint upVotes;
-           uint downVotes;
-           readonly DateTime timeStamp;
-           SortedSet<Comment> commentReplies;
+            readonly uint id;
+            readonly uint authorID;
+            string content;
+            readonly uint parentID;
+            uint upVotes;
+            uint downVotes;
+            readonly DateTime timeStamp;
+            SortedSet<Comment> commentReplies;
 
-           public uint Score { get => upVotes - downVotes; }
-           public uint ID { get => id; }
-           public uint AuthorID { get => authorID; }
-           public uint ParentID { get => parentID; }
-           public string Content { get => content; }
-           public DateTime TimeStamp { get => timeStamp; }
+            public uint Score { get => upVotes - downVotes; }
+            public uint ID { get => id; }
+            public uint AuthorID { get => authorID; }
+            public uint ParentID { get => parentID; }
+            public string Content { get => content; }
+            public DateTime TimeStamp => timeStamp;
 
             //Default Constructor
             public Comment()
-           {
-               id = 0;
-               authorID = 0;
-               content = "";
-               parentID = 0;
-               upVotes = 0;
-               downVotes = 0;
-               timeStamp = new DateTime(0, 0, 0, 0, 0, 0);
-           }
+            {
+                id = 0;
+                authorID = 0;
+                content = "";
+                parentID = 0;
+                upVotes = 0;
+                downVotes = 0;
+                timeStamp = new DateTime(0, 0, 0, 0, 0, 0);
+            }
 
-           //Alternate Constructor if provided all arguements for the user
-           public Comment(uint id, uint authorID, string content, uint parentID, uint upVotes, uint downVotes, int year, int month, int day, int hour, int minute, int second)
-           {
-               this.id = id;
-               this.authorID = authorID;
-               this.content = content;
-               this.parentID = parentID;
-               this.upVotes = upVotes;
-               this.downVotes = downVotes;
-               this.timeStamp = new DateTime(year, month, day, hour, minute, second);
-           }
-           public Comment(uint authorID, string content, uint parentID)
-           {
-               this.authorID = authorID;
-               this.content = content;
-               this.parentID = parentID;
-               upVotes = 1;
-               downVotes = 0;
-           }
-           public Comment(string[] args)
-           {
-               if (args.Length == 12)
-               {
-                   id = Convert.ToUInt32(args[0]);
-                   authorID = Convert.ToUInt32(args[1]);
-                   content = Convert.ToString(args[2]);
-                   parentID = Convert.ToUInt32(args[3]);
-                   upVotes = Convert.ToUInt32(args[4]);
-                   downVotes = Convert.ToUInt32(args[5]);
+            //Alternate Constructor if provided all arguements for the user
+            public Comment(uint id, uint authorID, string content, uint parentID, uint upVotes, uint downVotes, int year, int month, int day, int hour, int minute, int second)
+            {
+                this.id = id;
+                this.authorID = authorID;
+                this.content = content;
+                this.parentID = parentID;
+                this.upVotes = upVotes;
+                this.downVotes = downVotes;
+                this.timeStamp = new DateTime(year, month, day, hour, minute, second);
+            }
 
-                   int year = Convert.ToInt32(args[6]);
-                   int month = Convert.ToInt32(args[7]);
-                   int day = Convert.ToInt32(args[8]);
-                   int hour = Convert.ToInt32(args[9]);
-                   int minute = Convert.ToInt32(args[10]);
-                   int second = Convert.ToInt32(args[11]);
+            public Comment(uint authorID, string content, uint parentID)
+            {
+                this.authorID = authorID;
+                this.content = content;
+                this.parentID = parentID;
+                upVotes = 1;
+                downVotes = 0;
+            }
+            public Comment(string[] args)
+            {
+                if (args.Length == 12)
+                {
+                    id = Convert.ToUInt32(args[0]);
+                    authorID = Convert.ToUInt32(args[1]);
+                    content = Convert.ToString(args[2]);
+                    parentID = Convert.ToUInt32(args[3]);
+                    upVotes = Convert.ToUInt32(args[4]);
+                    downVotes = Convert.ToUInt32(args[5]);
 
-                   timeStamp = new DateTime(year, month, day, hour, minute, second);
-               }
-           }
-           public int CompareTo(Object alpha)
-           {
-               if (alpha == null) throw new ArgumentNullException("argument bad");
+                    int year = Convert.ToInt32(args[6]);
+                    int month = Convert.ToInt32(args[7]);
+                    int day = Convert.ToInt32(args[8]);
+                    int hour = Convert.ToInt32(args[9]);
+                    int minute = Convert.ToInt32(args[10]);
+                    int second = Convert.ToInt32(args[11]);
 
-               // else
-               Comment rightOp = alpha as Comment;
+                    timeStamp = new DateTime(year, month, day, hour, minute, second);
+                }
+            }
 
-               if (rightOp != null)
-                   return Score.CompareTo(rightOp.Score);
-               else
-                   throw new ArgumentException("argument was not a student");
-           }
-            /*
-             * IEnumberable
-             */
-           IEnumerator IEnumerable.GetEnumerator()
-           {
-               return (IEnumerator)GetEnumerator();
-           }
-           public CommentEnum GetEnumerator()
-           {
-               return new CommentEnum(commentReplies.ToArray());
-           }
+            public int CompareTo(Object alpha)
+            {
+                if (alpha == null) throw new ArgumentNullException("argument bad");
+
+                // else
+                Comment rightOp = alpha as Comment;
+
+                if (rightOp != null)
+                    return Score.CompareTo(rightOp.Score);
+                else
+                    throw new ArgumentException("argument was not a student");
+            }
+
+            // Implementation for the GetEnumerator method.
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return (IEnumerator) GetEnumerator();
+            }
+
+            public CommentEnum GetEnumerator()
+            {
+                return new CommentEnum(commentReplies.ToArray());
+            }
         }
+
         public class CommentEnum : IEnumerator
         {
-            public Comment[] _comments;
+            public Comment[] _comment;
 
             // Enumerators are positioned before the first element
             // until the first MoveNext() call.
@@ -492,13 +436,13 @@ namespace Assignment1
 
             public CommentEnum(Comment[] list)
             {
-                _comments = list;
+                _comment = list;
             }
 
             public bool MoveNext()
             {
                 position++;
-                return (position < _comments.Length);
+                return (position < _comment.Length);
             }
 
             public void Reset()
@@ -513,14 +457,13 @@ namespace Assignment1
                     return Current;
                 }
             }
-
             public Comment Current
             {
                 get
                 {
                     try
                     {
-                        return _comments[position];
+                        return _comment[position];
                     }
                     catch (IndexOutOfRangeException)
                     {
@@ -530,218 +473,311 @@ namespace Assignment1
             }
         }
 
+        public class PostEnum : IEnumerator
+        {
+            public Comment[] _post;
+
+            // Enumerators are positioned before the first element
+            // until the first MoveNext() call.
+            int position = -1;
+
+            public PostEnum(Comment[] list)
+            {
+                _post = list;
+            }
+
+            public bool MoveNext()
+            {
+                position++;
+                return (position < _post.Length);
+            }
+
+            public void Reset()
+            {
+                position = -1;
+            }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+            public Comment Current
+            {
+                get
+                {
+                    try
+                    {
+                        return _post[position];
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        throw new InvalidOperationException();
+                    }
+                }
+            }
+        }
+
+        public class SubEnum : IEnumerator
+        {
+            public Post[] _post;
+
+            // Enumerators are positioned before the first element
+            // until the first MoveNext() call.
+            int position = -1;
+
+            public SubEnum(Post[] list)
+            {
+                _post = list;
+            }
+
+            public bool MoveNext()
+            {
+                position++;
+                return (position < _post.Length);
+            }
+
+            public void Reset()
+            {
+                position = -1;
+            }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+            public Post Current
+            {
+                get
+                {
+                    try
+                    {
+                        return _post[position];
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        throw new InvalidOperationException();
+                    }
+                }
+            }
+        }
+
+
         public static void ReadInputFiles(SortedSet<User> users, SortedSet<Subreddit> subreddits, SortedSet<Post> subPosts, SortedSet<Comment> comments)
+        {
+            String slacker;
+            String[] tokens;
+
+            //For users and users.txt
+            try
             {
-                String slacker;
-                String[] tokens;
-
-                //For users and users.txt
-                try
+                using (StreamReader inFile = new StreamReader("..\\..\\users.txt"))
                 {
-                    using (StreamReader inFile = new StreamReader("..\\..\\users.txt"))
+                    slacker = inFile.ReadLine();
+
+                    while (slacker != null)
                     {
+                        tokens = slacker.Split('\t');
+                        users.Add(new User(tokens));
+
                         slacker = inFile.ReadLine();
-
-                        while(slacker != null)
-                        {
-                            tokens = slacker.Split('\t');
-                            users.Add(new User(tokens));
-
-                            slacker = inFile.ReadLine();
-                        }
                     }
-                }
-                catch (IOException e)
-                {
-                    Console.WriteLine("The file could not be read:");
-                    Console.WriteLine(e.Message);
-                }
-
-                //For subreddits and subreddits.txt
-                try
-                {
-                    using (StreamReader inFile = new StreamReader("..\\..\\subreddits.txt"))
-                    {
-                        slacker = inFile.ReadLine();
-
-                        while (slacker != null)
-                        {
-                            tokens = slacker.Split('\t');
-                            subreddits.Add(new Subreddit(tokens));
-                            slacker = inFile.ReadLine();
-                        }
-                    }
-                }
-                catch (IOException e)
-                {
-                    Console.WriteLine("The file could not be read:");
-                    Console.WriteLine(e.Message);
-                }
-
-                //For posts and posts.txt
-                try
-                {
-                    using (StreamReader inFile = new StreamReader("..\\..\\posts.txt"))
-                    {
-                        slacker = inFile.ReadLine();
-
-                        while (slacker != null)
-                        {
-                            tokens = slacker.Split('\t');
-                            subPosts.Add(new Post(tokens));
-                            //Console.WriteLine("Add entry:" + tokens[0]);
-                            //Console.WriteLine(subPosts.Count());
-                            slacker = inFile.ReadLine();
-                        }
-                    }
-                }
-                catch (IOException e)
-                {
-                    Console.WriteLine("The file could not be read:");
-                    Console.WriteLine(e.Message);
-                }
-
-                //For comments and comments.txt
-                try
-                {
-                    using (StreamReader inFile = new StreamReader("..\\..\\comments.txt"))
-                    {
-                        slacker = inFile.ReadLine();
-
-                        while (slacker != null)
-                        {
-                            tokens = slacker.Split('\t');
-                            comments.Add(new Comment(tokens));
-
-                            slacker = inFile.ReadLine();
-                        }
-                    }
-                }
-                catch (IOException e)
-                {
-                    Console.WriteLine("The file could not be read:");
-                    Console.WriteLine(e.Message);
                 }
             }
-            public static void mainMenu()
+            catch (IOException e)
             {
-                Console.WriteLine("");
-                Console.WriteLine("Reddit, The Command Line Version!");
-                Console.WriteLine("");
-                Console.WriteLine("1. List All Subreddits");
-                Console.WriteLine("2. List All Posts from All Subreddits");
-                Console.WriteLine("3. List All Posts from A Single Subreddit");
-                Console.WriteLine("4. View Comments From A Single Post");
-                Console.WriteLine("5. Add Comment to Post");
-                Console.WriteLine("6. Add Reply to Comment");
-                Console.WriteLine("7. Create New Post");
-                Console.WriteLine("8. Delete Post");
-                Console.WriteLine("9. Quit");
-                Console.WriteLine("");
-                Console.WriteLine("");
-
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(e.Message);
             }
-            static void Main(string[] args)
-           {
-                SortedSet<User> users = new SortedSet<User>();
-                SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
-                SortedSet<Post> subPosts = new SortedSet<Post>();
-                SortedSet<Comment> comments = new SortedSet<Comment>();
 
-                ReadInputFiles(users, subreddits, subPosts, comments);
-
-                string input;
-                string[] options = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "q", "Q", "e", "E", "quit", "exit" };
-                string[] exitCondition = { "q", "Q", "e", "E", "quit", "exit" };
-
-
-                do
+            //For subreddits and subreddits.txt
+            try
+            {
+                using (StreamReader inFile = new StreamReader("..\\..\\subreddits.txt"))
                 {
-                    mainMenu();
-                    input = Console.ReadLine();
+                    slacker = inFile.ReadLine();
 
-                    if (!options.Any(x => x == input))
+                    while (slacker != null)
                     {
+                        tokens = slacker.Split('\t');
+                        subreddits.Add(new Subreddit(tokens));
+                        slacker = inFile.ReadLine();
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(e.Message);
+            }
+
+            //For posts and posts.txt
+            try
+            {
+                using (StreamReader inFile = new StreamReader("..\\..\\posts.txt"))
+                {
+                    slacker = inFile.ReadLine();
+
+                    while (slacker != null)
+                    {
+                        tokens = slacker.Split('\t');
+                        subPosts.Add(new Post(tokens));
+                        Console.WriteLine("Add entry:" + tokens[0]);
+                        Console.WriteLine(subPosts.Count());
+                        slacker = inFile.ReadLine();
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(e.Message);
+            }
+
+            //For comments and comments.txt
+            try
+            {
+                using (StreamReader inFile = new StreamReader("..\\..\\comments.txt"))
+                {
+                    slacker = inFile.ReadLine();
+
+                    while (slacker != null)
+                    {
+                        tokens = slacker.Split('\t');
+                        comments.Add(new Comment(tokens));
+
+                        slacker = inFile.ReadLine();
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(e.Message);
+            }
+        }
+        public static void mainMenu()
+        {
+            Console.WriteLine("");
+            Console.WriteLine("Reddit, The Command Line Version!");
+            Console.WriteLine("");
+            Console.WriteLine("1. List All Subreddits");
+            Console.WriteLine("2. List All Posts from All Subreddits");
+            Console.WriteLine("3. List All Posts from A Single Subreddit");
+            Console.WriteLine("4. View Comments From A Single Post");
+            Console.WriteLine("5. Add Comment to Post");
+            Console.WriteLine("6. Add Reply to Comment");
+            Console.WriteLine("7. Create New Post");
+            Console.WriteLine("8. Delete Post");
+            Console.WriteLine("9. Quit");
+            Console.WriteLine("");
+            Console.WriteLine("");
+
+        }
+        static void Main(string[] args)
+        {
+            SortedSet<User> users = new SortedSet<User>();
+            SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
+            SortedSet<Post> subPosts = new SortedSet<Post>();
+            SortedSet<Comment> comments = new SortedSet<Comment>();
+
+            ReadInputFiles(users, subreddits, subPosts, comments);
+
+            foreach (User i in users)
+            {
+                Console.WriteLine(i.ToString());
+            }
+            string input;
+            string[] options = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "q", "Q", "e", "E", "quit", "exit" };
+            string[] exitCondition = { "q", "Q", "e", "E", "quit", "exit", "9" };
+            bool tf = false;
+
+            do
+            {
+                mainMenu();
+                input = Console.ReadLine();
+
+                if (!options.Any(x => x == input))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Please enter a valid input!");
+                }
+
+                switch (input)
+                {
+                    case "1":
                         Console.Clear();
-                        Console.WriteLine("Please enter a valid input!");
-                    }
+                        Console.WriteLine("You've entered: 1");
+                        Console.WriteLine("Name -- (Active members/Total members)");
+                        foreach (Subreddit s in subreddits)
+                        {
+                            Console.WriteLine("<" + s.Id + ">" + " " + s.Name + " -- <" + s.Active + "/" + s.Members + ">");
+                        }
+                        break;
+                    case "2":
+                        Console.Clear();
+                        Console.WriteLine("You've entered: 2");
+                        Console.WriteLine("<ID> [Subreddit] (Score) Title + PostContent - PosterName |TimeStamp|\n");
 
-                    switch (input)
-                    {
-                        //Case where user wants to see all subreddits available.
-                        case "1":
-                            Console.Clear();
-                            Console.WriteLine("Name -- (Active Members / Total Members)");
-                            Console.WriteLine("");
-
-                            foreach (Subreddit i in subreddits)
+                        foreach (Post i in subPosts)
+                        {
+                            foreach (Subreddit j in subreddits)
                             {
-                                Console.WriteLine(i.ToString());
+                                foreach (User u in users)
+                                {
+                                    if (j.Id.CompareTo(i.SubHome) == 0 && i.AuthorID.CompareTo(u.Id) == 0)
+                                    {
+                                        Console.WriteLine("        <" + i.Id + "> [" + j.Name + "] (" + i.Score + ") "
+                                            + i.Title + " " + i.PostContent + " - " + u.Name + " |" + i.TimeStamp + "|");
+                                    }
+                                }
                             }
-                            break;
+                        }
+                        break;
+                    case "3":
+                        Console.Clear();
+                        Console.Write("Enter the name of the Subreddit to list from: ");
+                        input = Console.ReadLine();
+                        Console.WriteLine("<ID> [Subreddit] (Score) Title + PostContent - PosterName |TimeStamp|");
+                        Console.WriteLine("");
 
-                        //Case where user wants to see all posts from all subreddits.
-                        case "2":
-                            Console.Clear();
-                            Console.WriteLine("<ID> [Subreddit] (Score) Title + PostContent - PosterName |TimeStamp|");
-                            Console.WriteLine("");
-
-                            foreach (Post i in subPosts)
+                        if (subreddits.Any(x => x.Name == input))
+                        {
+                            foreach (Subreddit i in subreddits.Where(x => x.Name == input))
                             {
-                                foreach (Subreddit j in subreddits)
+                                foreach (Post s in subPosts.Where(x => x.SubHome == i.Id))
                                 {
                                     foreach (User u in users)
                                     {
-                                        if (j.ID.CompareTo(i.subHOME) == 0 && i.AuthorID.CompareTo(u.ID) == 0)
+                                        if (i.Id.CompareTo(s.SubHome) == 0 && s.AuthorID.CompareTo(u.Id) == 0)
                                         {
-                                            Console.WriteLine("        <" + i.ID + "> [" + j.Name + "] (" + i.Score + ") " 
-                                                + i.Title + " " + i.PostContent + " - " + u.Name + " |" + i.TimeStamp + "|");
+                                            Console.WriteLine("        <" + s.Id + "> [" + i.Name + "] (" + s.Score + ") "
+                                            + s.Title + " " + s.PostContent + " - " + u.Name + " |" + s.TimeStamp + "|");
                                         }
                                     }
                                 }
                             }
-                            break;
-
-                        //Case where user wants to see all posts of a requested subreddit.
-                        case "3":
+                        }
+                        else
+                        {
+                            Console.WriteLine("I cannot find the " + input + " subreddit! Returning to main menu!");
+                            System.Threading.Thread.Sleep(3000);
                             Console.Clear();
-                            Console.Write("Enter the name of the Subreddit to list from: ");
-                            input = Console.ReadLine();
-                            Console.WriteLine("<ID> [Subreddit] (Score) Title + PostContent - PosterName |TimeStamp|");
-                            Console.WriteLine("");
-
-                            if (subreddits.Any(x => x.Name == input))
-                            {
-                                foreach(Subreddit i in subreddits.Where( x => x.Name == input))
-                                {
-                                    foreach(Post s in subPosts.Where(x => x.subHOME == i.ID))
-                                    {
-                                        foreach (User u in users)
-                                        {
-                                            if (i.ID.CompareTo(s.subHOME) == 0 && s.AuthorID.CompareTo(u.ID) == 0)
-                                            {
-                                                Console.WriteLine("        <" + s.ID + "> [" + i.Name + "] (" + s.Score + ") "
-                                                + s.Title + " " + s.PostContent + " - " + u.Name + " |" + s.TimeStamp + "|");
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine("I cannot find the " + input + " subreddit! Returning to main menu!");
-                                System.Threading.Thread.Sleep(3000);
-                                Console.Clear();
-                            }
+                        }
                         break;
 
-                        //Case where user wants to view all replies to a certain subreddit post.
-                        case "4":
-                            Console.Clear();
-                            Console.Write("Enter the ID of the post you'd like to see the comments for: ");
+                    //Case where user wants to view all replies to a certain subreddit post.
+                    case "4":
+                        Console.Clear();
+                        Console.Write("Enter the ID of the post you'd like to see the comments for: ");
 
-                            input = Console.ReadLine();
-                            int num = -1;
+                        input = Console.ReadLine();
+                        int num = -1;
 
                         if (!int.TryParse(input, out num))
                         {
@@ -755,20 +791,20 @@ namespace Assignment1
 
                         else
                         {
-                            if (subPosts.Any(x => x.ID == Convert.ToUInt32(input)))
+                            if (subPosts.Any(x => x.Id == Convert.ToUInt32(input)))
                             {
                                 Console.WriteLine("");
-                                foreach (Post s in subPosts.Where(x => x.ID == Convert.ToUInt32(input)))
+                                foreach (Post s in subPosts.Where(x => x.Id == Convert.ToUInt32(input)))
                                 {
-                                    foreach (Subreddit i in subreddits.Where(x => x.ID == s.subHOME))
+                                    foreach (Subreddit i in subreddits.Where(x => x.Id == s.SubHome))
                                     {
-                                        foreach (Comment c in comments.Where(x => x.ParentID == s.ID))
+                                        foreach (Comment c in comments.Where(x => x.ParentID == s.Id))
                                         {
                                             foreach (User u in users)
                                             {
-                                                if (i.ID.CompareTo(s.subHOME) == 0 && s.AuthorID.CompareTo(u.ID) == 0)
+                                                if (i.Id.CompareTo(s.SubHome) == 0 && s.AuthorID.CompareTo(u.Id) == 0)
                                                 {
-                                                    Console.WriteLine("        <" + s.ID + "> [" + i.Name + "] (" + s.Score + ") "
+                                                    Console.WriteLine("        <" + s.Id + "> [" + i.Name + "] (" + s.Score + ") "
                                                        + s.Title + " " + s.PostContent + " - " + u.Name + " |" + s.TimeStamp + "|");
                                                     Console.WriteLine("");
                                                 }
@@ -776,11 +812,11 @@ namespace Assignment1
                                         }
                                     }
                                 }
-                                foreach (Post s in subPosts.Where(x => x.ID == Convert.ToUInt32(input)))
+                                foreach (Post s in subPosts.Where(x => x.Id == Convert.ToUInt32(input)))
                                 {
-                                    foreach (Comment c in comments.Where(x => x.ParentID == s.ID))
+                                    foreach (Comment c in comments.Where(x => x.ParentID == s.Id))
                                     {
-                                        foreach (User n in users.Where(x => x.ID == c.AuthorID))
+                                        foreach (User n in users.Where(x => x.Id == c.AuthorID))
                                         {
 
                                             Console.WriteLine("        <" + c.ID + "> (" + c.Score + ") " + c.Content +
@@ -789,7 +825,7 @@ namespace Assignment1
                                         }
                                         foreach (Comment d in comments.Where(x => x.ParentID == c.ID))
                                         {
-                                            foreach (User m in users.Where(x => x.ID == d.AuthorID))
+                                            foreach (User m in users.Where(x => x.Id == d.AuthorID))
                                             {
                                                 Console.WriteLine("                <" + d.ID + "> (" + d.Score + ") " + d.Content +
                                                     " - " + m.Name + " |" + d.TimeStamp + "|");
@@ -809,36 +845,262 @@ namespace Assignment1
                         }
 
                         break;
-                        case "5":
-                            Console.Clear();
-                            Console.WriteLine("You've entered: 5");
-                            break;
-                        case "6":
-                            Console.Clear();
-                            Console.WriteLine("You've entered: 6");
-                            break;
-                        case "7":
-                            Console.Clear();
-                            Console.WriteLine("You've entered: 7");
-                            break;
-                        case "8":
-                            Console.Clear();
-                            Console.WriteLine("You've entered: 8");
-                            break;
-                        //Case where user wants to quit using prompt on main menu.
-                        case "9":
-                            Console.Write("Closing Reddit...");
-                            System.Threading.Thread.Sleep(2000);
-                            Console.WriteLine("");
-                            Environment.Exit(1);
-                            break;
-                }
-                } while (!exitCondition.Any(x => x == input));
+                    case "5":
+                        Console.Clear();
+                        Console.WriteLine("You've entered: 5\n");
+                        Console.Write("Enter the ID of the post you'd like to comment on: ");
 
-                Console.Write("Closing Reddit...");
-                System.Threading.Thread.Sleep(2000);
-                Console.WriteLine("");
-                Environment.Exit(1);
-            }
+
+                        input = Console.ReadLine();
+
+                        if (!int.TryParse(input, out num))
+                        {
+                            Console.WriteLine("");
+                            Console.WriteLine("Please enter a number!");
+                            Console.WriteLine("Returning to main menu...");
+                            System.Threading.Thread.Sleep(3000);
+                            Console.Clear();
+                            break;
+                        }
+
+                        else
+                        {
+
+                            foreach (Post j in subPosts)
+                            {
+                                if (Convert.ToUInt32(input) == j.Id)
+                                {
+                                    Console.WriteLine("Post Found!");
+                                    tf = true;
+                                    break;
+                                }
+                            }
+
+                            if (tf)
+                            {
+                                uint tempId = Convert.ToUInt32(input);
+
+                                Console.Write("Please enter your comment: ");
+                                input = Console.ReadLine();
+                                Comment tempcomm = new Comment(0001, input, tempId);
+
+                                comments.Add(tempcomm);
+                                tf = false;
+                            }
+                            else
+                            {
+                                Console.WriteLine("No post with that ID was found.");
+                                Console.WriteLine("Returning to main menu...");
+                                System.Threading.Thread.Sleep(3000);
+                                Console.Clear();
+                            }
+                        }
+                        break;
+                    case "6":
+                        Console.Clear();
+                        Console.WriteLine("You've entered: 6");
+
+                        Console.Clear();
+                        Console.Write("Enter the ID of the comment you'd like to add a reply to: ");
+
+                        input = Console.ReadLine();
+                        uint tid = Convert.ToUInt32(input);
+                        Comment tcomm = null;
+                        int tempi = -1;
+                        tf = false;
+
+                        if (!int.TryParse(input, out tempi))
+                        {
+                            Console.WriteLine("");
+                            Console.WriteLine("Please enter a number!");
+                            Console.WriteLine("Returning to main menu...");
+                            System.Threading.Thread.Sleep(3000);
+                            Console.Clear();
+                            break;
+                        }
+                        else
+                        {
+                            foreach (Comment tcmt in comments)
+                            {
+                                if (tcmt.ID == tid)
+                                {
+                                    Console.WriteLine("Comment found");
+                                    tf = true;
+                                    break;
+                                }
+                            }
+
+                            if (!tf)
+                            {
+                                Console.WriteLine("Comment does not exist.");
+                                Console.WriteLine("Returning to main menu...");
+                                System.Threading.Thread.Sleep(3000);
+                            }
+
+                            Console.Write("Enter your reply: ");
+                            input = Console.ReadLine();
+                        }
+                        
+
+                       /* else
+                        {
+                            if (comments.Any(x => x.ID == Convert.ToUInt32(input)))
+                            {
+                                Console.WriteLine("");
+                                foreach (Post s in subPosts.Where(x => x.Id == Convert.ToUInt32(input)))
+                                {
+                                    foreach (Subreddit i in subreddits.Where(x => x.Id == s.SubHome))
+                                    {
+                                        foreach (Comment c in comments.Where(x => x.ParentID == s.Id))
+                                        {
+                                            foreach (User u in users)
+                                            {
+                                                if (i.Id.CompareTo(s.SubHome) == 0 && s.AuthorID.CompareTo(u.Id) == 0)
+                                                {
+                                                    Console.WriteLine("        <" + s.Id + "> [" + i.Name + "] (" + s.Score + ") "
+                                                       + s.Title + " " + s.PostContent + " - " + u.Name + " |" + s.TimeStamp + "|");
+                                                    Console.WriteLine("");
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                foreach (Post s in subPosts.Where(x => x.Id == Convert.ToUInt32(input)))
+                                {
+                                    foreach (Comment c in comments.Where(x => x.ParentID == s.Id))
+                                    {
+                                        foreach (User n in users.Where(x => x.Id == c.AuthorID))
+                                        {
+
+                                            Console.WriteLine("        <" + c.ID + "> (" + c.Score + ") " + c.Content +
+                                                " - " + n.Name + " |" + c.TimeStamp + "|");
+                                            Console.WriteLine("");
+                                        }
+                                        foreach (Comment d in comments.Where(x => x.ParentID == c.ID))
+                                        {
+                                            foreach (User m in users.Where(x => x.Id == d.AuthorID))
+                                            {
+                                                Console.WriteLine("                <" + d.ID + "> (" + d.Score + ") " + d.Content +
+                                                    " - " + m.Name + " |" + d.TimeStamp + "|");
+                                                Console.WriteLine("");
+                                            }
+                                        }
+                                    }
+                                }
+                            }*/
+                            else
+                            {
+                                Console.WriteLine("");
+                                Console.WriteLine("I cannot find the a post with ID: " + tid + "! Returning to main menu!");
+                                System.Threading.Thread.Sleep(3000);
+                                Console.Clear();
+                            }
+                        }
+
+                        break;
+                        break;
+                    case "7":
+
+                        Console.Clear();
+                        Console.WriteLine("You've entered: 7");
+
+                        uint tempid = 0;
+
+                        Console.Write("Enter the name of the subreddit you'd like to post in: ");
+                        input = Console.ReadLine();
+                        string tempname = input;
+
+                        foreach (Subreddit s in subreddits)
+                        {
+                            if (tempname == s.Name)
+                            {
+                                Console.WriteLine("Subreddit found!");
+                                tf = true;
+                                tempid = s.Id;
+                                break;
+                            }
+                        }
+
+                        if (!tf)
+                        {
+                            Console.WriteLine("No subreddit with that name was found.");
+                            Console.WriteLine("Returning to main menu...");
+                            System.Threading.Thread.Sleep(3000);
+                            Console.Clear();
+                            break;
+                        }
+
+                        tf = false;
+
+                        Console.Write("Enter the title of your new post: ");
+                        input = Console.ReadLine();
+                        string temptitle = input;
+
+                        Console.Write("Enter any contend you'd like to add: ");
+                        input = Console.ReadLine();
+                        string tempcontent = input;
+
+                        Post p = new Post(4260, 0001, temptitle, tempcontent, tempid);
+                        subPosts.Add(p);
+                        break;
+                    case "8":
+                        Console.Clear();
+                        Console.WriteLine("You've entered: 8");
+                        Console.Write("Enter the ID of the post you would like to delete: ");
+
+                        input = Console.ReadLine();
+
+                        Post temppost = null;
+
+                        if (!int.TryParse(input, out num))
+                        {
+                            Console.WriteLine("Please enter a number for the ID.");
+                            Console.WriteLine("Returning to main menu...");
+                            System.Threading.Thread.Sleep(3000);
+                            Console.Clear();
+                            break;
+                        }
+                        
+                        foreach (Post k in subPosts)
+                        {
+                            
+                            if (k.Id == Convert.ToUInt32(input) && k.AuthorID != 0001)
+                            {
+                                Console.WriteLine("You can't delete other user's posts.");
+                                Console.WriteLine("Returning to main menu...");
+                                System.Threading.Thread.Sleep(3000);
+                                Console.Clear();
+                            }
+                            else if (k.Id == Convert.ToUInt32(input) && k.AuthorID == 0001)
+                            {
+                                Console.WriteLine("Removing post...");
+                                temppost = new Post(k.Id, k.AuthorID, k.Title, k.PostContent, k.SubHome, k.UpVotes, k.DownVotes, k.Weight, k.TimeStamp.Year, k.TimeStamp.Month, k.TimeStamp.Day, k.TimeStamp.Hour, k.TimeStamp.Minute, k.TimeStamp.Second);
+                                Console.WriteLine("Returning to main menu...");
+                                System.Threading.Thread.Sleep(3000);
+                                Console.Clear();
+                            }
+                            else
+                            {
+                                Console.WriteLine("No post with that ID found.");
+                                Console.WriteLine("Returning to main menu...");
+                                System.Threading.Thread.Sleep(3000);
+                                Console.Clear();
+                            }
+                        }
+
+                        subPosts.Remove(temppost);
+                        break;
+                    case "9":
+                        Console.Clear();
+                        Console.WriteLine("You've entered: 9");
+                        break;
+                }
+            } while (!exitCondition.Any(x => x == input));
+
+            Console.Write("Closing Reddit...");
+            System.Threading.Thread.Sleep(2000);
+            Console.WriteLine("");
+            Environment.Exit(1);
         }
     }
+}
