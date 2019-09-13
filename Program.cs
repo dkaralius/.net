@@ -1,32 +1,47 @@
-﻿using System;
+﻿/********************************************************
+ *  PROGRAM : Assignment1                               *
+ *                                                      *
+ *  PROGRAMMERS : Josue Ballona and Dominykas Karalius  *
+ *  ZID : Z1832823 and Z1809478                         *
+ *                                                      *
+ *  DATE : 9/9/2019 Monday, September 9th 2019          *
+ *                                                      *
+ *                                                      *
+ * This program mimics the popular application "Reddit",*
+ * however is done in the command line. The program     *
+ * reads provided .txt input files and stores that      *
+ * information into SortedSet<> objects. Information    *
+ * such as users, subreddits, posts, and comments.      *
+ * The user of the program can choose from a variety    *
+ * of actions to perfrom; view users, view all posts,   *
+ * view posts of single subreddit, and so on.           *
+ *******************************************************/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Collections;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Program_1
+namespace Assignment_1
 {
-    class Program
+    class Assignment1
     {
-
         public class User : IComparable
         {
-            // private variables
+            //Private variables
             private readonly uint id;
             private readonly string name;
             private int postScore;
             private int commentScore;
 
-            // public properties
+            //Public properties
             public uint Id { get => id; }
             public string Name { get => name; }
             public int PostScore { get => postScore; set => postScore = value; }
             public int CommentScore { get => commentScore; set => commentScore = value; }
             public int TotalScore { get => (CommentScore + PostScore); }
 
-            // default constructor
+            //Default constructor
             public User()
             {
                 id = 0;
@@ -35,7 +50,7 @@ namespace Program_1
                 commentScore = 0;
             }
 
-            // all arguments provided constructor
+            //Alternate constructor where all arguments are provided
             public User(uint id, string name, int postScore, int commentScore)
             {
                 this.id = id;
@@ -44,7 +59,7 @@ namespace Program_1
                 this.commentScore = commentScore;
             }
 
-            // only name and id provided
+            //Alternate constructor where only id and name are provided
             public User(uint id, string name)
             {
                 this.id = id;
@@ -53,7 +68,19 @@ namespace Program_1
                 commentScore = 0;
             }
 
-            // override CompareTo to sort by name
+            //Alternate constructor to take n number of args
+            public User(string[] args)
+            {
+                if (args.Length == 4)
+                {
+                    id = Convert.ToUInt32(args[0]);
+                    name = args[1];
+                    postScore = Convert.ToInt32(args[2]);
+                    commentScore = Convert.ToInt32(args[3]);
+                }
+            }
+
+            //Overriden CompareTo() to sort by name
             public int CompareTo(Object alpha)
             {
                 // check that alpha isnt empty
@@ -69,17 +96,7 @@ namespace Program_1
                     throw new ArgumentException("Argument was not a user.");
             }
 
-            public User(string[] args)
-            {
-                if (args.Length == 4)
-                {
-                    id = Convert.ToUInt32(args[0]);
-                    name = args[1];
-                    postScore = Convert.ToInt32(args[2]);
-                    commentScore = Convert.ToInt32(args[3]);
-                }
-            }
-
+            //Overriden ToString() to print out user neatly
             public override string ToString()
             {
                 return String.Format("User: {1}({0}) has a post score of {2} and comment score of {3}", id, name, postScore, commentScore);
@@ -88,13 +105,14 @@ namespace Program_1
 
         public class Subreddit : IComparable, IEnumerable
         {
+            //Private variables
             private readonly uint id;
             private string name;
             private uint members;
             private uint active;
             SortedSet<Post> subPosts;
 
-            // properties
+            //Public properties
             public uint Id => id;
             public string Name
             {
@@ -112,8 +130,7 @@ namespace Program_1
                 set { active = value; }
             }
 
-
-            // default
+            //Default constructor
             public Subreddit()
             {
                 id = 0;
@@ -122,7 +139,7 @@ namespace Program_1
                 active = 0;
             }
 
-            // alternate construct
+            //Alternate constructor where all arguments are provided
             public Subreddit(uint id, string name, uint members, uint active)
             {
                 this.id = id;
@@ -131,7 +148,7 @@ namespace Program_1
                 this.active = active;
             }
 
-            // name and id construct
+            //Alternate constructor where only id and name are provided
             public Subreddit(uint id, string name)
             {
                 this.id = id;
@@ -140,6 +157,7 @@ namespace Program_1
                 active = 0;
             }
 
+            //Alternate constructor to take n number of args
             public Subreddit(string[] args)
             {
                 if (args.Length == 4)
@@ -151,6 +169,7 @@ namespace Program_1
                 }
             }
 
+            //Overriden CompareTo() to sort by name
             public int CompareTo(Object alpha)
             {
                 if (alpha == null) throw new ArgumentNullException("argument bad");
@@ -163,7 +182,7 @@ namespace Program_1
                     throw new ArgumentException("argument was not a name.");
             }
 
-            // Implementation for the GetEnumerator method.
+            // Implementation for the GetEnumerator method
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return (IEnumerator)GetEnumerator();
@@ -177,6 +196,7 @@ namespace Program_1
 
         public class Post : IComparable, IEnumerable
         {
+            //Private variables
             readonly uint id;
             string title;
             readonly uint authorID;
@@ -188,20 +208,20 @@ namespace Program_1
             readonly DateTime timeStamp;
             SortedSet<Comment> postComments;
 
-            //Properties
-            public uint Id => id;
+            //Public properties
+            public uint Id { get => id; }
             public string Title
             {
                 get { return title; }
                 set { title = value; }
             }
-            public uint AuthorID => authorID;
+            public uint AuthorID { get => authorID; }
             public string PostContent
             {
                 get { return postContent; }
                 set { postContent = value; }
             }
-            public uint SubHome => subHome;
+            public uint SubHome { get => subHome; }
             public uint UpVotes
             {
                 get { return upVotes; }
@@ -240,8 +260,7 @@ namespace Program_1
                     }
                 }
             }
-
-            public DateTime TimeStamp => timeStamp;
+            public DateTime TimeStamp { get => timeStamp; }
 
             //Default Constructor
             public Post()
@@ -256,7 +275,8 @@ namespace Program_1
                 weight = 0;
                 timeStamp = DateTime.Now;
             }
-            //Alternate Constructor if provided all arguements for the user
+
+            //Alternate constructor where all arguments are provided
             public Post(uint id, uint authorID, string title, string postContent, uint subHome, uint upVotes, uint downVotes, uint weight, int year, int month, int day, int hour, int minute, int second)
             {
                 this.id = id;
@@ -269,7 +289,8 @@ namespace Program_1
                 this.weight = weight;
                 this.timeStamp = new DateTime(year, month, day, hour, minute, second);
             }
-            //Alternate Constructor if provided only a title, authorID, postContent, and subHome
+
+            //Alternate Constructor where only title, authorID, postContent, and subHome are provided
             public Post(uint id, uint authorID, string title, string postContent, uint subHome)
             {
                 this.id = id;
@@ -282,6 +303,7 @@ namespace Program_1
                 timeStamp = DateTime.Now;
             }
 
+            //Alternate constructor to take n number of args
             public Post(string[] args)
             {
                 if (args.Length == 14)
@@ -305,6 +327,8 @@ namespace Program_1
                     timeStamp = new DateTime(year, month, day, hour, minute, second);
                 }
             }
+
+            //Overriden CompareTo() to sort by post rating
             public int CompareTo(Object alpha)
             {
                 if (alpha == null) throw new ArgumentNullException("argument bad");
@@ -332,6 +356,7 @@ namespace Program_1
 
         public class Comment : IComparable, IEnumerable
         {
+            //Private variables
             readonly uint id;
             readonly uint authorID;
             string content;
@@ -340,13 +365,14 @@ namespace Program_1
             uint downVotes;
             readonly DateTime timeStamp;
             SortedSet<Comment> commentReplies;
-
+            
+            //Public properties
             public uint Score { get => upVotes - downVotes; }
             public uint ID { get => id; }
             public uint AuthorID { get => authorID; }
             public uint ParentID { get => parentID; }
             public string Content { get => content; }
-            public DateTime TimeStamp => timeStamp;
+            public DateTime TimeStamp { get => timeStamp; }
 
             //Default Constructor
             public Comment()
@@ -360,7 +386,7 @@ namespace Program_1
                 timeStamp = new DateTime(0, 0, 0, 0, 0, 0);
             }
 
-            //Alternate Constructor if provided all arguements for the user
+            //Alternate Constructor if all arguements are provided
             public Comment(uint id, uint authorID, string content, uint parentID, uint upVotes, uint downVotes, int year, int month, int day, int hour, int minute, int second)
             {
                 this.id = id;
@@ -372,6 +398,7 @@ namespace Program_1
                 this.timeStamp = new DateTime(year, month, day, hour, minute, second);
             }
 
+            //Alternate Constructor where only author id, content, and parent id are provided
             public Comment(uint authorID, string content, uint parentID)
             {
                 id = 6068; // temporary
@@ -382,6 +409,8 @@ namespace Program_1
                 downVotes = 0;
                 timeStamp = DateTime.Now;
             }
+
+            //Alternate constructor to take n number of args
             public Comment(string[] args)
             {
                 if (args.Length == 12)
@@ -404,6 +433,7 @@ namespace Program_1
                 }
             }
 
+            //Overriden CompareTo() to sort by score
             public int CompareTo(Object alpha)
             {
                 if (alpha == null) throw new ArgumentNullException("argument bad");
@@ -429,12 +459,11 @@ namespace Program_1
             }
         }
 
+        //Enum class implementation for Comment SortedSet<>
         public class CommentEnum : IEnumerator
         {
             public Comment[] _comment;
 
-            // Enumerators are positioned before the first element
-            // until the first MoveNext() call.
             int position = -1;
 
             public CommentEnum(Comment[] list)
@@ -476,12 +505,11 @@ namespace Program_1
             }
         }
 
+        //Enum class implementation for Post SortedSet<>
         public class PostEnum : IEnumerator
         {
             public Comment[] _post;
 
-            // Enumerators are positioned before the first element
-            // until the first MoveNext() call.
             int position = -1;
 
             public PostEnum(Comment[] list)
@@ -523,12 +551,11 @@ namespace Program_1
             }
         }
 
+        //Enum class implementation for Subreddit SortedSet<>
         public class SubEnum : IEnumerator
         {
             public Post[] _post;
 
-            // Enumerators are positioned before the first element
-            // until the first MoveNext() call.
             int position = -1;
 
             public SubEnum(Post[] list)
@@ -570,11 +597,11 @@ namespace Program_1
             }
         }
 
-
+        //Method that is used to read the provided input files and store the information into their respective SortedSet<> objects
         public static void ReadInputFiles(SortedSet<User> users, SortedSet<Subreddit> subreddits, SortedSet<Post> subPosts, SortedSet<Comment> comments)
         {
-            String slacker;
-            String[] tokens;
+            String slacker; //Buffer
+            String[] tokens; //Used to store tokens of buffer
 
             //For users and users.txt
             try
@@ -664,6 +691,8 @@ namespace Program_1
                 Console.WriteLine(e.Message);
             }
         }
+
+        //Method used to print the main menu of application, so user can keep using it until the want to leave
         public static void mainMenu()
         {
             Console.WriteLine("");
@@ -681,7 +710,13 @@ namespace Program_1
             Console.WriteLine("");
             Console.WriteLine("");
         }
+
+        //Exception for when user enters restricted word
         public class FoulMouthException : Exception { }
+
+        //Method used to check the input provided by user, for restricted words.
+        //Returns boolean value of true, if user didn't use any restricted words.
+        //If user enters a restricted word, throws the FoulMouth exception.
         public static bool LanguageFilter(String input)
         {
             string[] badWords = { "baddie", "butthead", "shoot", "fudge" };
@@ -693,33 +728,41 @@ namespace Program_1
             else
                 throw new FoulMouthException();
         }
+
+        //Main program
         static void Main(string[] args)
         {
+            //SortedSet<> objects
             SortedSet<User> users = new SortedSet<User>();
             SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
             SortedSet<Post> subPosts = new SortedSet<Post>();
             SortedSet<Comment> comments = new SortedSet<Comment>();
 
-            ReadInputFiles(users, subreddits, subPosts, comments);
+            ReadInputFiles(users, subreddits, subPosts, comments); //Read the files
 
-            string input;
-            string[] options = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "q", "Q", "e", "E", "quit", "exit" };
-            string[] exitCondition = { "q", "Q", "e", "E", "quit", "exit", "9" };
+            string input; //User input will be stored here
+            string[] options = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "q", "Q", "e", "E", "quit", "exit" }; //Options user is allowed to choose from. All other inputs, give error message
+            string[] exitCondition = { "q", "Q", "e", "E", "quit", "exit", "9" }; //If user input is equal to one of these values, program exits
+
             bool tf = false;
 
+            //Program cycles itself until user wants to exit
             do
             {
                 mainMenu();
-                input = Console.ReadLine();
+                input = Console.ReadLine(); //Asks what user wants to do
 
+                //Checks to see if input is a valid choice, if not, tells them their input is invalid
                 if (!options.Any(x => x == input))
                 {
                     Console.Clear();
                     Console.WriteLine("Please enter a valid input!");
                 }
 
+                //Else, executes the case the user entered (1-9)
                 switch (input)
                 {
+                    //Case where user wants to see all users on the subreddit
                     case "1":
                         Console.Clear();
                         Console.WriteLine("Name -- (Active members/Total members)");
@@ -729,6 +772,7 @@ namespace Program_1
                         }
                         break;
 
+                    //Case where user wants to see all posts from all subreddits
                     case "2":
                         Console.Clear();
                         Console.WriteLine("<ID> [Subreddit] (Score) Title + PostContent - PosterName |TimeStamp|\n");
@@ -749,6 +793,7 @@ namespace Program_1
                         }
                         break;
 
+                    //Case where user wants to all posts from a desired subreddit
                     case "3":
                         Console.Clear();
                         Console.Write("Enter the name of the Subreddit to list from: ");
@@ -781,7 +826,7 @@ namespace Program_1
                         }
                         break;
 
-                    //Case where user wants to view all replies to a certain subreddit post.
+                    //Case where user wants to view all comments to a requested subreddit post
                     case "4":
                         Console.Clear();
                         Console.Write("Enter the ID of the post you'd like to see the comments for: ");
@@ -789,6 +834,7 @@ namespace Program_1
                         input = Console.ReadLine();
                         int num = -1;
 
+                        //Checks to see if user is entering only a number, if not, returns to main menu
                         if (!int.TryParse(input, out num))
                         {
                             Console.WriteLine("");
@@ -800,7 +846,7 @@ namespace Program_1
                         }
                         else
                         {
-                            if (subPosts.Any(x => x.Id == Convert.ToUInt32(input)))
+                            if (subPosts.Any(x => x.Id == Convert.ToUInt32(input))) //If the entered ID exists for a post, continue
                             {
                                 Console.WriteLine("");
                                 foreach (Post s in subPosts.Where(x => x.Id == Convert.ToUInt32(input)))
@@ -844,7 +890,7 @@ namespace Program_1
                                     }
                                 }
                             }
-                            else
+                            else //Else, post doesn't exist with requested ID and returns to main menu
                             {
                                 Console.WriteLine("");
                                 Console.WriteLine("I cannot find the a post with ID: " + input + "! Returning to main menu!");
@@ -854,13 +900,14 @@ namespace Program_1
                         }
                         break;
 
+                    //Case where user wants to comment on a post of their choice
                     case "5":
                         Console.Clear();
                         Console.Write("Enter the ID of the post you'd like to comment on: ");
 
-
                         input = Console.ReadLine();
 
+                        //Checks to see if user is entering only a number, if not, returns to main menu
                         if (!int.TryParse(input, out num))
                         {
                             Console.WriteLine("");
@@ -876,7 +923,7 @@ namespace Program_1
 
                             foreach (Post j in subPosts)
                             {
-                                if (Convert.ToUInt32(input) == j.Id)
+                                if (Convert.ToUInt32(input) == j.Id) //If post exists with desired ID, continue
                                 {
                                     Console.WriteLine("Post Found!");
                                     tf = true;
@@ -892,7 +939,7 @@ namespace Program_1
                                 input = Console.ReadLine();
                                 try
                                 {
-                                    LanguageFilter(input);
+                                    LanguageFilter(input); //Checks to see if desired comment contains any censored words
 
                                     Comment tempcomm = new Comment(0001, input, tempId);
 
@@ -901,7 +948,7 @@ namespace Program_1
 
                                     Console.WriteLine("Comment sent.");
                                 }
-                                catch (FoulMouthException e)
+                                catch (FoulMouthException e) //If it does contain censored words, gives error and returns to main menu
                                 {
                                     Console.Clear();
                                     Console.WriteLine("You entered a censored word! Please do not use censored words in posts and comments!");
@@ -910,7 +957,7 @@ namespace Program_1
                                     Console.Clear();
                                 }
                             }
-                            else
+                            else //No post exists with provided ID and returns to main menu
                             {
                                 Console.WriteLine("No post with that ID was found.");
                                 Console.WriteLine("Returning to main menu...");
@@ -927,6 +974,8 @@ namespace Program_1
 
                         input = Console.ReadLine();
                         int tempi = -1;
+
+                        //Checks to see if user is entering only a number, if not, returns to main menu
                         if (!int.TryParse(input, out tempi))
                         {
                             Console.WriteLine("");
@@ -943,7 +992,7 @@ namespace Program_1
 
                         foreach (Comment tcmt in comments)
                         {
-                            if (tcmt.ID == tid)
+                            if (tcmt.ID == tid) //If comment exists with desired ID, continue
                             {
                                 Console.WriteLine("Comment found");
                                 tf = true;
@@ -951,7 +1000,7 @@ namespace Program_1
                             }
                         }
 
-                        if (!tf)
+                        if (!tf) //If no comment exists with provided ID, gives error and returns to main menu
                         {
                             Console.WriteLine("Comment does not exist.");
                             Console.WriteLine("Returning to main menu...");
@@ -964,7 +1013,7 @@ namespace Program_1
 
                         try
                         {
-                            LanguageFilter(input);
+                            LanguageFilter(input); //Checks to see if desired reply contains any censored words
 
                             tcomm = new Comment(0001, input, tid);
 
@@ -972,7 +1021,7 @@ namespace Program_1
 
                             Console.WriteLine("Reply sent.");
                         }
-                        catch (FoulMouthException e)
+                        catch (FoulMouthException e) //If it does contain censored words, gives error and returns to main menu
                         {
                             Console.Clear();
                             Console.WriteLine("You entered a censored word! Please do not use censored words in posts and comments!");
@@ -996,14 +1045,14 @@ namespace Program_1
                         {
                             if (tempname == s.Name)
                             {
-                                Console.WriteLine("Subreddit found!");
+                                Console.WriteLine("Subreddit found!"); //If subreddit exists with desired ID, continue
                                 tf = true;
                                 tempid = s.Id;
                                 break;
                             }
                         }
 
-                        if (!tf)
+                        if (!tf) //If no subreddit exists with provided ID, gives error and returns to main menu
                         {
                             Console.WriteLine("No subreddit with that name was found.");
                             Console.WriteLine("Returning to main menu...");
@@ -1024,14 +1073,14 @@ namespace Program_1
                             input = Console.ReadLine();
                             string tempcontent = input;
 
-                            LanguageFilter(temptitle);
+                            LanguageFilter(temptitle); //Checks to see if desired title and content contain any censored words
                             LanguageFilter(tempcontent);
 
                             Post p = new Post(4260, 0001, temptitle, tempcontent, tempid);
                             Console.WriteLine("Post added.");
                             subPosts.Add(p);
                         }
-                        catch (FoulMouthException e)
+                        catch (FoulMouthException e) //If they do contain censored words, gives error and returns to main menu
                         {
                             Console.Clear();
                             Console.WriteLine("You entered a censored word! Please do not use censored words in posts and comments!");
@@ -1049,6 +1098,7 @@ namespace Program_1
 
                         Post temppost = null;
 
+                        //Checks to see if user is entering only a number, if not, returns to main menu
                         if (!int.TryParse(input, out num))
                         {
                             Console.WriteLine("Please enter a number for the ID.");
@@ -1079,7 +1129,7 @@ namespace Program_1
                             subPosts.Remove(temppost);
                             break;
                         }
-                        if (tid == Convert.ToUInt32(input) && tempid != 0001)
+                        if (tid == Convert.ToUInt32(input) && tempid != 0001) //If user tries to delete other user's posts, gives error and returns to main menu
                         {
                             Console.WriteLine("You can't delete other user's posts.");
                             Console.WriteLine("Returning to main menu...");
@@ -1087,7 +1137,7 @@ namespace Program_1
                             Console.Clear();
                             break;
                         }
-                        else
+                        else //If no post exists with provided ID, gives error and returns to main menu
                         {
                             Console.WriteLine("No post with that ID found.");
                             Console.WriteLine("Returning to main menu...");
@@ -1096,12 +1146,14 @@ namespace Program_1
                             break;
                         }
 
+                    //Case where user wants to exit the program
                     case "9":
                         Console.Clear();
                         break;
                 }
-            } while (!exitCondition.Any(x => x == input));
+            } while (!exitCondition.Any(x => x == input)); //Program will go back to top of loop until user press 9, or one of the exit condition strings
 
+            //When user does enter one of the exit condition strings, lets user know program is shutting down and terminates.
             Console.Write("Closing Reddit...");
             System.Threading.Thread.Sleep(2000);
             Console.WriteLine("");
