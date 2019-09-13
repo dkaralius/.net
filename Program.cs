@@ -174,7 +174,7 @@ namespace Program_1
                 return new SubEnum(subPosts.ToArray());
             }
         }
-       
+
         public class Post : IComparable, IEnumerable
         {
             readonly uint id;
@@ -420,7 +420,7 @@ namespace Program_1
             // Implementation for the GetEnumerator method.
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return (IEnumerator) GetEnumerator();
+                return (IEnumerator)GetEnumerator();
             }
 
             public CommentEnum GetEnumerator()
@@ -609,6 +609,7 @@ namespace Program_1
                     {
                         tokens = slacker.Split('\t');
                         subreddits.Add(new Subreddit(tokens));
+
                         slacker = inFile.ReadLine();
                     }
                 }
@@ -630,8 +631,7 @@ namespace Program_1
                     {
                         tokens = slacker.Split('\t');
                         subPosts.Add(new Post(tokens));
-                        Console.WriteLine("Add entry:" + tokens[0]);
-                        Console.WriteLine(subPosts.Count());
+
                         slacker = inFile.ReadLine();
                     }
                 }
@@ -680,7 +680,18 @@ namespace Program_1
             Console.WriteLine("9. Quit");
             Console.WriteLine("");
             Console.WriteLine("");
+        }
+        public class FoulMouthException : Exception { }
+        public static bool LanguageFilter(String input)
+        {
+            string[] badWords = { "baddie", "butthead", "shoot", "fudge" };
 
+            if (!badWords.Any(x => x == input))
+            {
+                return true; // No bad words
+            }
+            else
+                throw new FoulMouthException();
         }
         static void Main(string[] args)
         {
@@ -691,10 +702,6 @@ namespace Program_1
 
             ReadInputFiles(users, subreddits, subPosts, comments);
 
-            foreach (User i in users)
-            {
-                Console.WriteLine(i.ToString());
-            }
             string input;
             string[] options = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "q", "Q", "e", "E", "quit", "exit" };
             string[] exitCondition = { "q", "Q", "e", "E", "quit", "exit", "9" };
@@ -715,16 +722,15 @@ namespace Program_1
                 {
                     case "1":
                         Console.Clear();
-                        Console.WriteLine("You've entered: 1");
                         Console.WriteLine("Name -- (Active members/Total members)");
                         foreach (Subreddit s in subreddits)
                         {
                             Console.WriteLine("<" + s.Id + ">" + " " + s.Name + " -- <" + s.Active + "/" + s.Members + ">");
                         }
                         break;
+
                     case "2":
                         Console.Clear();
-                        Console.WriteLine("You've entered: 2");
                         Console.WriteLine("<ID> [Subreddit] (Score) Title + PostContent - PosterName |TimeStamp|\n");
 
                         foreach (Post i in subPosts)
@@ -742,6 +748,7 @@ namespace Program_1
                             }
                         }
                         break;
+
                     case "3":
                         Console.Clear();
                         Console.Write("Enter the name of the Subreddit to list from: ");
@@ -791,7 +798,6 @@ namespace Program_1
                             Console.Clear();
                             break;
                         }
-
                         else
                         {
                             if (subPosts.Any(x => x.Id == Convert.ToUInt32(input)))
@@ -846,11 +852,10 @@ namespace Program_1
                                 Console.Clear();
                             }
                         }
-
                         break;
+
                     case "5":
                         Console.Clear();
-                        Console.WriteLine("You've entered: 5\n");
                         Console.Write("Enter the ID of the post you'd like to comment on: ");
 
 
@@ -878,19 +883,32 @@ namespace Program_1
                                     break;
                                 }
                             }
+
                             uint tempId = Convert.ToUInt32(input);
+
                             if (tf)
                             {
-                                
-
                                 Console.Write("Please enter your comment: ");
                                 input = Console.ReadLine();
-                                Comment tempcomm = new Comment(0001, input, tempId);
-                                
-                                comments.Add(tempcomm);
-                                tf = false;
+                                try
+                                {
+                                    LanguageFilter(input);
 
-                                Console.WriteLine("Comment sent.");
+                                    Comment tempcomm = new Comment(0001, input, tempId);
+
+                                    comments.Add(tempcomm);
+                                    tf = false;
+
+                                    Console.WriteLine("Comment sent.");
+                                }
+                                catch (FoulMouthException e)
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("You entered a censored word! Please do not use censored words in posts and comments!");
+                                    Console.WriteLine("Returning to main menu...");
+                                    System.Threading.Thread.Sleep(3000);
+                                    Console.Clear();
+                                }
                             }
                             else
                             {
@@ -902,16 +920,14 @@ namespace Program_1
                             }
                         }
                         break;
-                    case "6":
-                        Console.Clear();
-                        Console.WriteLine("You've entered: 6");
 
+                    case "6":
                         Console.Clear();
                         Console.Write("Enter the ID of the comment you'd like to add a reply to: ");
 
                         input = Console.ReadLine();
                         int tempi = -1;
-                        if(!int.TryParse(input, out tempi))
+                        if (!int.TryParse(input, out tempi))
                         {
                             Console.WriteLine("");
                             Console.WriteLine("Please enter a number!");
@@ -920,7 +936,7 @@ namespace Program_1
                             Console.Clear();
                             break;
                         }
-                        
+
                         uint tid = Convert.ToUInt32(input);
                         Comment tcomm = null;
                         tf = false;
@@ -946,17 +962,29 @@ namespace Program_1
                         Console.Write("Enter your reply: ");
                         input = Console.ReadLine();
 
-                        tcomm = new Comment(0001, input, tid);
+                        try
+                        {
+                            LanguageFilter(input);
 
-                        comments.Add(tcomm);
+                            tcomm = new Comment(0001, input, tid);
 
-                        Console.WriteLine("Reply sent.");
+                            comments.Add(tcomm);
 
+                            Console.WriteLine("Reply sent.");
+                        }
+                        catch (FoulMouthException e)
+                        {
+                            Console.Clear();
+                            Console.WriteLine("You entered a censored word! Please do not use censored words in posts and comments!");
+                            Console.WriteLine("Returning to main menu...");
+                            System.Threading.Thread.Sleep(3000);
+                            Console.Clear();
+                        }
                         break;
+
                     case "7":
 
                         Console.Clear();
-                        Console.WriteLine("You've entered: 7");
 
                         uint tempid = 0;
 
@@ -988,19 +1016,33 @@ namespace Program_1
 
                         Console.Write("Enter the title of your new post: ");
                         input = Console.ReadLine();
-                        string temptitle = input;
 
-                        Console.Write("Enter any contend you'd like to add: ");
-                        input = Console.ReadLine();
-                        string tempcontent = input;
+                        try
+                        {
+                            string temptitle = input;
+                            Console.Write("Enter any content you'd like to add: ");
+                            input = Console.ReadLine();
+                            string tempcontent = input;
 
-                        Post p = new Post(4260, 0001, temptitle, tempcontent, tempid);
-                        Console.WriteLine("Post added.");
-                        subPosts.Add(p);
+                            LanguageFilter(temptitle);
+                            LanguageFilter(tempcontent);
+
+                            Post p = new Post(4260, 0001, temptitle, tempcontent, tempid);
+                            Console.WriteLine("Post added.");
+                            subPosts.Add(p);
+                        }
+                        catch (FoulMouthException e)
+                        {
+                            Console.Clear();
+                            Console.WriteLine("You entered a censored word! Please do not use censored words in posts and comments!");
+                            Console.WriteLine("Returning to main menu...");
+                            System.Threading.Thread.Sleep(3000);
+                            Console.Clear();
+                        }
                         break;
+
                     case "8":
                         Console.Clear();
-                        Console.WriteLine("You've entered: 8");
                         Console.Write("Enter the ID of the post you would like to delete: ");
 
                         input = Console.ReadLine();
@@ -1015,13 +1057,11 @@ namespace Program_1
                             Console.Clear();
                             break;
                         }
-
                         tf = false;
                         tid = 0;
                         tempid = 0;
                         foreach (Post k in subPosts)
                         {
-                            
                             if (k.Id == Convert.ToUInt32(input) && k.AuthorID == 0001)
                             {
                                 Console.WriteLine("Removing post...");
@@ -1033,15 +1073,12 @@ namespace Program_1
                                 System.Threading.Thread.Sleep(3000);
                                 Console.Clear();
                             }
-                           
                         }
-                        
                         if (tf)
                         {
                             subPosts.Remove(temppost);
                             break;
                         }
-
                         if (tid == Convert.ToUInt32(input) && tempid != 0001)
                         {
                             Console.WriteLine("You can't delete other user's posts.");
@@ -1059,11 +1096,8 @@ namespace Program_1
                             break;
                         }
 
-                        
-                        break;
                     case "9":
                         Console.Clear();
-                        Console.WriteLine("You've entered: 9");
                         break;
                 }
             } while (!exitCondition.Any(x => x == input));
