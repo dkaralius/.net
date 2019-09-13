@@ -254,7 +254,7 @@ namespace Program_1
                 upVotes = 0;
                 downVotes = 0;
                 weight = 0;
-                timeStamp = new DateTime(0, 0, 0, 0, 0, 0);
+                timeStamp = DateTime.Now;
             }
             //Alternate Constructor if provided all arguements for the user
             public Post(uint id, uint authorID, string title, string postContent, uint subHome, uint upVotes, uint downVotes, uint weight, int year, int month, int day, int hour, int minute, int second)
@@ -279,6 +279,7 @@ namespace Program_1
                 this.subHome = subHome;
                 this.upVotes = 1;
                 this.downVotes = 0;
+                timeStamp = DateTime.Now;
             }
 
             public Post(string[] args)
@@ -373,11 +374,13 @@ namespace Program_1
 
             public Comment(uint authorID, string content, uint parentID)
             {
+                id = 6068; // temporary
                 this.authorID = authorID;
                 this.content = content;
                 this.parentID = parentID;
                 upVotes = 1;
                 downVotes = 0;
+                timeStamp = DateTime.Now;
             }
             public Comment(string[] args)
             {
@@ -732,7 +735,7 @@ namespace Program_1
                                 {
                                     if (j.Id.CompareTo(i.SubHome) == 0 && i.AuthorID.CompareTo(u.Id) == 0)
                                     {
-                                        Console.WriteLine("        <" + i.Id + "> [" + j.Name + "] (" + i.Score + ") "
+                                        Console.WriteLine("        <" + String.Format("{0000}", i.Id) + "> [" + j.Name + "] (" + i.Score + ") "
                                             + i.Title + " " + i.PostContent + " - " + u.Name + " |" + i.TimeStamp + "|");
                                     }
                                 }
@@ -875,17 +878,19 @@ namespace Program_1
                                     break;
                                 }
                             }
-
+                            uint tempId = Convert.ToUInt32(input);
                             if (tf)
                             {
-                                uint tempId = Convert.ToUInt32(input);
+                                
 
                                 Console.Write("Please enter your comment: ");
                                 input = Console.ReadLine();
                                 Comment tempcomm = new Comment(0001, input, tempId);
-
+                                
                                 comments.Add(tempcomm);
                                 tf = false;
+
+                                Console.WriteLine("Comment sent.");
                             }
                             else
                             {
@@ -893,6 +898,7 @@ namespace Program_1
                                 Console.WriteLine("Returning to main menu...");
                                 System.Threading.Thread.Sleep(3000);
                                 Console.Clear();
+                                break;
                             }
                         }
                         break;
@@ -904,12 +910,8 @@ namespace Program_1
                         Console.Write("Enter the ID of the comment you'd like to add a reply to: ");
 
                         input = Console.ReadLine();
-                        uint tid = Convert.ToUInt32(input);
-                        Comment tcomm = null;
                         int tempi = -1;
-                        tf = false;
-
-                        if (!int.TryParse(input, out tempi))
+                        if(!int.TryParse(input, out tempi))
                         {
                             Console.WriteLine("");
                             Console.WriteLine("Please enter a number!");
@@ -918,86 +920,38 @@ namespace Program_1
                             Console.Clear();
                             break;
                         }
-                        else
-                        {
-                            foreach (Comment tcmt in comments)
-                            {
-                                if (tcmt.ID == tid)
-                                {
-                                    Console.WriteLine("Comment found");
-                                    tf = true;
-                                    break;
-                                }
-                            }
-
-                            if (!tf)
-                            {
-                                Console.WriteLine("Comment does not exist.");
-                                Console.WriteLine("Returning to main menu...");
-                                System.Threading.Thread.Sleep(3000);
-                            }
-
-                            Console.Write("Enter your reply: ");
-                            input = Console.ReadLine();
-                        }
                         
+                        uint tid = Convert.ToUInt32(input);
+                        Comment tcomm = null;
+                        tf = false;
 
-                       /* else
+                        foreach (Comment tcmt in comments)
                         {
-                            if (comments.Any(x => x.ID == Convert.ToUInt32(input)))
+                            if (tcmt.ID == tid)
                             {
-                                Console.WriteLine("");
-                                foreach (Post s in subPosts.Where(x => x.Id == Convert.ToUInt32(input)))
-                                {
-                                    foreach (Subreddit i in subreddits.Where(x => x.Id == s.SubHome))
-                                    {
-                                        foreach (Comment c in comments.Where(x => x.ParentID == s.Id))
-                                        {
-                                            foreach (User u in users)
-                                            {
-                                                if (i.Id.CompareTo(s.SubHome) == 0 && s.AuthorID.CompareTo(u.Id) == 0)
-                                                {
-                                                    Console.WriteLine("        <" + s.Id + "> [" + i.Name + "] (" + s.Score + ") "
-                                                       + s.Title + " " + s.PostContent + " - " + u.Name + " |" + s.TimeStamp + "|");
-                                                    Console.WriteLine("");
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                foreach (Post s in subPosts.Where(x => x.Id == Convert.ToUInt32(input)))
-                                {
-                                    foreach (Comment c in comments.Where(x => x.ParentID == s.Id))
-                                    {
-                                        foreach (User n in users.Where(x => x.Id == c.AuthorID))
-                                        {
-
-                                            Console.WriteLine("        <" + c.ID + "> (" + c.Score + ") " + c.Content +
-                                                " - " + n.Name + " |" + c.TimeStamp + "|");
-                                            Console.WriteLine("");
-                                        }
-                                        foreach (Comment d in comments.Where(x => x.ParentID == c.ID))
-                                        {
-                                            foreach (User m in users.Where(x => x.Id == d.AuthorID))
-                                            {
-                                                Console.WriteLine("                <" + d.ID + "> (" + d.Score + ") " + d.Content +
-                                                    " - " + m.Name + " |" + d.TimeStamp + "|");
-                                                Console.WriteLine("");
-                                            }
-                                        }
-                                    }
-                                }
-                            }*/
-                            else
-                            {
-                                Console.WriteLine("");
-                                Console.WriteLine("I cannot find the a post with ID: " + tid + "! Returning to main menu!");
-                                System.Threading.Thread.Sleep(3000);
-                                Console.Clear();
+                                Console.WriteLine("Comment found");
+                                tf = true;
+                                break;
                             }
                         }
 
-                        break;
+                        if (!tf)
+                        {
+                            Console.WriteLine("Comment does not exist.");
+                            Console.WriteLine("Returning to main menu...");
+                            System.Threading.Thread.Sleep(3000);
+                            break;
+                        }
+
+                        Console.Write("Enter your reply: ");
+                        input = Console.ReadLine();
+
+                        tcomm = new Comment(0001, input, tid);
+
+                        comments.Add(tcomm);
+
+                        Console.WriteLine("Reply sent.");
+
                         break;
                     case "7":
 
@@ -1041,6 +995,7 @@ namespace Program_1
                         string tempcontent = input;
 
                         Post p = new Post(4260, 0001, temptitle, tempcontent, tempid);
+                        Console.WriteLine("Post added.");
                         subPosts.Add(p);
                         break;
                     case "8":
@@ -1060,35 +1015,51 @@ namespace Program_1
                             Console.Clear();
                             break;
                         }
-                        
+
+                        tf = false;
+                        tid = 0;
+                        tempid = 0;
                         foreach (Post k in subPosts)
                         {
                             
-                            if (k.Id == Convert.ToUInt32(input) && k.AuthorID != 0001)
-                            {
-                                Console.WriteLine("You can't delete other user's posts.");
-                                Console.WriteLine("Returning to main menu...");
-                                System.Threading.Thread.Sleep(3000);
-                                Console.Clear();
-                            }
-                            else if (k.Id == Convert.ToUInt32(input) && k.AuthorID == 0001)
+                            if (k.Id == Convert.ToUInt32(input) && k.AuthorID == 0001)
                             {
                                 Console.WriteLine("Removing post...");
                                 temppost = new Post(k.Id, k.AuthorID, k.Title, k.PostContent, k.SubHome, k.UpVotes, k.DownVotes, k.Weight, k.TimeStamp.Year, k.TimeStamp.Month, k.TimeStamp.Day, k.TimeStamp.Hour, k.TimeStamp.Minute, k.TimeStamp.Second);
                                 Console.WriteLine("Returning to main menu...");
+                                tf = true;
+                                tid = Convert.ToUInt32(input);
+                                tempid = k.AuthorID;
                                 System.Threading.Thread.Sleep(3000);
                                 Console.Clear();
                             }
-                            else
-                            {
-                                Console.WriteLine("No post with that ID found.");
-                                Console.WriteLine("Returning to main menu...");
-                                System.Threading.Thread.Sleep(3000);
-                                Console.Clear();
-                            }
+                           
+                        }
+                        
+                        if (tf)
+                        {
+                            subPosts.Remove(temppost);
+                            break;
                         }
 
-                        subPosts.Remove(temppost);
+                        if (tid == Convert.ToUInt32(input) && tempid != 0001)
+                        {
+                            Console.WriteLine("You can't delete other user's posts.");
+                            Console.WriteLine("Returning to main menu...");
+                            System.Threading.Thread.Sleep(3000);
+                            Console.Clear();
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("No post with that ID found.");
+                            Console.WriteLine("Returning to main menu...");
+                            System.Threading.Thread.Sleep(3000);
+                            Console.Clear();
+                            break;
+                        }
+
+                        
                         break;
                     case "9":
                         Console.Clear();
