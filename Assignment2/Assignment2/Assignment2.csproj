@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="subreddits.txt" />
+    <Content Include="posts.txt" />
     <Content Include="users.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
