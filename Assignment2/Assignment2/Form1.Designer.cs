@@ -310,8 +310,10 @@ namespace Assignment2
             this.Reply_Input.Location = new System.Drawing.Point(1284, 445);
             this.Reply_Input.Multiline = true;
             this.Reply_Input.Name = "Reply_Input";
+            this.Reply_Input.ReadOnly = true;
             this.Reply_Input.Size = new System.Drawing.Size(603, 145);
             this.Reply_Input.TabIndex = 22;
+            this.Reply_Input.TextChanged += new System.EventHandler(this.Reply_Input_TextChanged);
             // 
             // label9
             // 
@@ -326,13 +328,16 @@ namespace Assignment2
             // 
             // Reply_Button
             // 
+            this.Reply_Button.Enabled = false;
             this.Reply_Button.ForeColor = System.Drawing.Color.LimeGreen;
             this.Reply_Button.Location = new System.Drawing.Point(1761, 596);
             this.Reply_Button.Name = "Reply_Button";
             this.Reply_Button.Size = new System.Drawing.Size(125, 33);
-            this.Reply_Button.TabIndex = 24;
+            this.Reply_Button.TabIndex = 7;
             this.Reply_Button.Text = "Add Reply";
             this.Reply_Button.UseVisualStyleBackColor = true;
+            this.Reply_Button.Visible = false;
+            this.Reply_Button.Click += new System.EventHandler(this.Reply_Button_Click);
             // 
             // Form1
             // 

@@ -564,11 +564,15 @@ namespace Assignment2
         private void User_Output_SelectedIndexChanged(object sender, EventArgs e)
         {
             string[] tokens = User_Output.SelectedItem.ToString().Split(' ');
+            Subreddit_Output.SetSelected(0, true);
+            
             System_Output.Text = "Please provide the password for User '" + tokens[0] + "'.";
             LogIn.Text = "Log-In";
             Delete_Post_Button.Enabled = false;
             Delete_Post_Button.Visible = false;
             Comments_Output.Items.Clear();
+            Delete_Comment_Button.Visible = false;
+            Reply_Input.ReadOnly = false;
         }
 
         private void LogIn_Click(object sender, EventArgs e)
@@ -597,7 +601,7 @@ namespace Assignment2
                     LogIn.Text = "Log-In";
 
                     Delete_Post_Button.Visible = true;
-                    Delete_Comment_Button.Visible = true;
+                    
                     Delete_Comment_Button.Enabled = false;
 
                     
@@ -607,6 +611,7 @@ namespace Assignment2
                         Comments_Output.Items.Add("<" + c.ID + "> (" + c.Score + ") " + c.Content +
                                           " - " + u.Name + " |" + c.TimeStamp + "|");
                     }
+
                 }
                 else
                 {
@@ -661,7 +666,8 @@ namespace Assignment2
                     }
                 }
             }
-
+            if (Subreddit_Output.SelectedItem != null)
+                Delete_Comment_Button.Enabled = true;
             Delete_Post_Button.Enabled = false;
         }
         private void Post_Output_SelectedIndexChanged(object sender, EventArgs e)
@@ -670,6 +676,9 @@ namespace Assignment2
 
             string postID = tokens[0];
             string postSub = tokens[1];
+
+            Reply_Button.Visible = true;
+            Reply_Button.Enabled = false;
 
             //Removes "<" and ">" from the ID of post
             postID = postID.Remove(0, 1);
@@ -724,11 +733,12 @@ namespace Assignment2
                     }
                 }
             }
-            if (User_Output.SelectedItem != null)
+            if (Comments_Output.SelectedItem != null)
             {
                 Delete_Post_Button.Enabled = true;
                 
             }
+
         }
 
 
@@ -799,11 +809,6 @@ namespace Assignment2
             else if (temp.AuthorID == userId)
             {
                 postSet.Remove(temp);
-                /*for (int i = Post_Output.Items.Count - 1; i > -1; i--)
-                {
-                    if (Post_Output.Items[i].Equals(temp))
-                        postSet.RemoveWhere(Post_Output.Items[i])
-                }*/
                 Post_Output.Items.Clear();
                 Delete_Post_Button.Enabled = false;
                 foreach (Subreddit s in subreddits.Where(x => x.Name == postSub))
@@ -835,7 +840,7 @@ namespace Assignment2
             }
             Post_Output.Update();
             Comments_Output.Update();
-            //Post_Output.ClearSelected();
+
             temp = null;
             //System_Output.Text = userId + " " + username + " " + postID + " " + subname + " " + postSub;
         }
@@ -851,6 +856,9 @@ namespace Assignment2
             commentID = commentID.Remove(0, 1);
             commentID = commentID.Remove(4, 1);
 
+            if (User_Output.SelectedItem != null)
+                Delete_Comment_Button.Enabled = true;
+
             SortedSet<User> users = new SortedSet<User>();
             SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
             SortedSet<Post> posts = new SortedSet<Post>();
@@ -859,8 +867,10 @@ namespace Assignment2
 
             ReadInputFiles(users, subreddits, posts, comments);
 
-            Delete_Comment_Button.Enabled = true;
-            
+            Delete_Comment_Button.Visible = true;
+
+
+
         }
 
         private void Delete_Comment_Button_Click(object sender, EventArgs e)
@@ -924,11 +934,7 @@ namespace Assignment2
             else if (temp.AuthorID == userId)
             {
                 comments.Remove(temp);
-                /*for (int i = Post_Output.Items.Count - 1; i > -1; i--)
-                {
-                    if (Post_Output.Items[i].Equals(temp))
-                        postSet.RemoveWhere(Post_Output.Items[i])
-                }*/
+
                 Comments_Output.Items.Clear();
                 Delete_Comment_Button.Enabled = false;
                 foreach (Subreddit s in subreddits.Where(x => x.Name == postSub))
@@ -948,14 +954,101 @@ namespace Assignment2
                         }
                     }
                 }
-                System_Output.Text = "Post successfully deleted.";
+                System_Output.Text = "Comment successfully deleted.";
             }
             Post_Output.Update();
-            Comments_Output.Update();
-            //Post_Output.ClearSelected();
+           // Comments_Output.Update();
             temp = null;
             //System_Output.Text = userId + " " + username + " " + postID + " " + subname + " " + postSub;
 
         }
+
+        private void Reply_Input_TextChanged(object sender, EventArgs e)
+        {
+            Reply_Button.Enabled = true;
+
+        }
+
+        private void Reply_Button_Click(object sender, EventArgs e)
+        {
+            SortedSet<User> users = new SortedSet<User>();
+            SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
+            SortedSet<Post> posts = new SortedSet<Post>();
+            SortedSet<Comment> comments = new SortedSet<Comment>();
+
+            ReadInputFiles(users, subreddits, posts, comments);
+
+            String tempcontent = Reply_Input.Text;
+            string tempname = "";
+
+            if (Comments_Output.SelectedItem == null)
+            {
+                string[] tokens = Post_Output.SelectedItem.ToString().Split(' ');
+                string[] utokens = User_Output.SelectedItem.ToString().Split(' ');
+                
+
+                string postID = tokens[0];
+                string postSub = tokens[1];
+
+                Comment temp = null;
+
+                uint locked = 0;
+
+                //Removes "<" and ">" from the ID of post
+                postID = postID.Remove(0, 1);
+                postID = postID.Remove(4, 1);
+                foreach (Post p in posts.Where(x => x.Id == Convert.ToUInt32(postID)))
+                {
+                    foreach (User u in users.Where(x => x.Id == p.AuthorID))
+                    {
+                        temp = new Comment(p.AuthorID, tempcontent, p.SubHome);
+                        tempname = u.Name;
+                        locked = p.Locked;
+
+                    }
+                }
+                if (locked == 0)
+                    Comments_Output.Items.Add("<" + temp.ID + ">" + " " + "(" + temp.Score + ") " + temp.Content + " - " + utokens[0] + " |" + temp.TimeStamp + "|");
+                else
+                    System_Output.Text = "Cannot create a comment. The post is locked";
+            }
+            else
+            {
+                string[] tokens = Post_Output.SelectedItem.ToString().Split(' ');
+                string[] utokens = User_Output.SelectedItem.ToString().Split(' ');
+                string[] ctokens = Comments_Output.SelectedItem.ToString().Split(' ');
+
+
+                string postID = tokens[0];
+                string postSub = tokens[1];
+
+                string commentID = ctokens[0];
+
+                // remove brackets
+                commentID = postID.Remove(0, 1);
+                //postID = postID.Remove(4, 1);
+
+                Comment temp = null;
+
+                //Removes "<" and ">" from the ID of post
+                postID = postID.Remove(0, 1);
+                postID = postID.Remove(4, 1);
+                foreach (Comment c in comments)//.Where(x => x.Id == Convert.ToUInt32(postID)))
+                {
+                    foreach (User u in users.Where(x => x.Id == c.AuthorID))
+                    {
+                        //if (p.AuthorID == u.Id)
+                        //{
+                        temp = new Comment(c.ID, tempcontent, c.ParentID);
+                        tempname = u.Name;
+                        //}
+
+                    }
+                }
+                Comments_Output.Items.Add("     <" + temp.ID + ">" + " " + "(" + temp.Score + ") " + temp.Content + " - " + utokens[0] + " |" + temp.TimeStamp + "|");
+            }
+            Reply_Button.Enabled = false;
+        }
     }
+    
 }
