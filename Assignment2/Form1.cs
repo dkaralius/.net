@@ -674,10 +674,7 @@ namespace Assignment2
                     }
                 }
             }
-            if (Comments_Output.SelectedItem != null)
-            {
-                Delete_Post_Button.Enabled = true;
-            }
+            Delete_Comment_Button.Enabled = true;
         }
 
         //When user clicks on the delete button
@@ -772,10 +769,6 @@ namespace Assignment2
             Post_Output.Update();
             Comments_Output.Update();
             temp = null;
-            if (Subreddit_Output.SelectedItem != null)
-            {
-                Delete_Post_Button.Enabled = true;
-            }
         }
 
         //When the user clicks on a comment
