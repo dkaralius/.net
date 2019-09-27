@@ -4,13 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CA75E74D-DA07-497B-A5CA-1CA71CE25CEB}</ProjectGuid>
+    <ProjectGuid>{4D9D841C-136B-4840-9071-530F4E280893}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Assignment2</RootNamespace>
     <AssemblyName>Assignment2</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -80,8 +79,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="subreddits.txt" />
+    <Content Include="comments.txt" />
     <Content Include="posts.txt" />
+    <Content Include="subreddits.txt" />
     <Content Include="users.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
