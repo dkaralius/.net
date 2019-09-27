@@ -771,8 +771,11 @@ namespace Assignment2
             }
             Post_Output.Update();
             Comments_Output.Update();
-
             temp = null;
+            if (Subreddit_Output.SelectedItem != null)
+            {
+                Delete_Post_Button.Enabled = true;
+            }
         }
 
         //When the user clicks on a comment
