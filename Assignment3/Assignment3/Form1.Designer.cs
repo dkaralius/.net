@@ -56,8 +56,16 @@
             this.goldBox = new System.Windows.Forms.CheckBox();
             this.platBox = new System.Windows.Forms.CheckBox();
             this.subredditButton = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lessOrEqual = new System.Windows.Forms.RadioButton();
+            this.greaterOrEqual = new System.Windows.Forms.RadioButton();
+            this.scoreUpDown = new System.Windows.Forms.NumericUpDown();
+            this.pointsThresholdButton = new System.Windows.Forms.Button();
             this.postScoreSubredditPanel.SuspendLayout();
             this.PostScoreUserPanel.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.scoreUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // dateTimePicker
@@ -409,12 +417,102 @@
             this.subredditButton.UseVisualStyleBackColor = true;
             this.subredditButton.Click += new System.EventHandler(this.subredditButton_Click);
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.ForeColor = System.Drawing.Color.OrangeRed;
+            this.label9.Location = new System.Drawing.Point(16, 453);
+            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(376, 25);
+            this.label9.TabIndex = 26;
+            this.label9.Text = "Points Threshold for Posts/Comments";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.greaterOrEqual);
+            this.groupBox1.Controls.Add(this.lessOrEqual);
+            this.groupBox1.Location = new System.Drawing.Point(21, 490);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(209, 83);
+            this.groupBox1.TabIndex = 27;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "groupBox1";
+            // 
+            // lessOrEqual
+            // 
+            this.lessOrEqual.AutoSize = true;
+            this.lessOrEqual.ForeColor = System.Drawing.Color.White;
+            this.lessOrEqual.Location = new System.Drawing.Point(12, 22);
+            this.lessOrEqual.Margin = new System.Windows.Forms.Padding(4);
+            this.lessOrEqual.Name = "lessOrEqual";
+            this.lessOrEqual.Size = new System.Drawing.Size(174, 21);
+            this.lessOrEqual.TabIndex = 14;
+            this.lessOrEqual.TabStop = true;
+            this.lessOrEqual.Text = "Less Than or Equal To";
+            this.lessOrEqual.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lessOrEqual.UseVisualStyleBackColor = true;
+            // 
+            // greaterOrEqual
+            // 
+            this.greaterOrEqual.AutoSize = true;
+            this.greaterOrEqual.ForeColor = System.Drawing.Color.White;
+            this.greaterOrEqual.Location = new System.Drawing.Point(12, 51);
+            this.greaterOrEqual.Margin = new System.Windows.Forms.Padding(4);
+            this.greaterOrEqual.Name = "greaterOrEqual";
+            this.greaterOrEqual.Size = new System.Drawing.Size(193, 21);
+            this.greaterOrEqual.TabIndex = 15;
+            this.greaterOrEqual.TabStop = true;
+            this.greaterOrEqual.Text = "Greater Than or Equal To";
+            this.greaterOrEqual.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.greaterOrEqual.UseVisualStyleBackColor = true;
+            // 
+            // scoreUpDown
+            // 
+            this.scoreUpDown.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.scoreUpDown.Location = new System.Drawing.Point(236, 519);
+            this.scoreUpDown.Maximum = new decimal(new int[] {
+            250000,
+            0,
+            0,
+            0});
+            this.scoreUpDown.Minimum = new decimal(new int[] {
+            700000,
+            0,
+            0,
+            -2147483648});
+            this.scoreUpDown.Name = "scoreUpDown";
+            this.scoreUpDown.ReadOnly = true;
+            this.scoreUpDown.Size = new System.Drawing.Size(120, 22);
+            this.scoreUpDown.TabIndex = 28;
+            // 
+            // pointsThresholdButton
+            // 
+            this.pointsThresholdButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.pointsThresholdButton.Location = new System.Drawing.Point(391, 519);
+            this.pointsThresholdButton.Margin = new System.Windows.Forms.Padding(4);
+            this.pointsThresholdButton.Name = "pointsThresholdButton";
+            this.pointsThresholdButton.Size = new System.Drawing.Size(100, 28);
+            this.pointsThresholdButton.TabIndex = 29;
+            this.pointsThresholdButton.Text = "Query";
+            this.pointsThresholdButton.UseVisualStyleBackColor = true;
+            this.pointsThresholdButton.Click += new System.EventHandler(this.pointsThresholdButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(1559, 554);
+            this.ClientSize = new System.Drawing.Size(1566, 648);
+            this.Controls.Add(this.pointsThresholdButton);
+            this.Controls.Add(this.scoreUpDown);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.subredditButton);
             this.Controls.Add(this.platBox);
             this.Controls.Add(this.goldBox);
@@ -444,6 +542,9 @@
             this.postScoreSubredditPanel.PerformLayout();
             this.PostScoreUserPanel.ResumeLayout(false);
             this.PostScoreUserPanel.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.scoreUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -478,5 +579,11 @@
         private System.Windows.Forms.CheckBox goldBox;
         private System.Windows.Forms.CheckBox platBox;
         private System.Windows.Forms.Button subredditButton;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton greaterOrEqual;
+        private System.Windows.Forms.RadioButton lessOrEqual;
+        private System.Windows.Forms.NumericUpDown scoreUpDown;
+        private System.Windows.Forms.Button pointsThresholdButton;
     }
 }

@@ -355,7 +355,10 @@ namespace Assignment3
                 this.upVotes = upVotes;
                 this.downVotes = downVotes;
                 this.timeStamp = new DateTime(year, month, day, hour, minute, second);
-                this.awards = awards;
+                this.awards = new int[3];
+                this.awards[0] = awards[0];
+                this.awards[1] = awards[1];
+                this.awards[2] = awards[2];
             }
             //Alternate Constructor where only author id, content, and parent id are provided
             public Comment(uint authorID, string content, uint parentID)
@@ -367,11 +370,12 @@ namespace Assignment3
                 upVotes = 1;
                 downVotes = 0;
                 timeStamp = DateTime.Now;
-                awards = new int[3];
+                awards = new int[3];                
             }
             //Constructor to take number of args as in the text file.
             public Comment(string[] args)
             {
+                awards = new int[3];
                 if (args.Length == 15)
                 {
                     id = Convert.ToUInt32(args[0]);
@@ -447,6 +451,18 @@ namespace Assignment3
                 {
                     tokens = slacker.Split('\t');
                     posts.Add(new Post(tokens));
+
+                    slacker = inFile.ReadLine();
+                }
+            }
+            using (StreamReader inFile = new StreamReader("..\\..\\comments.txt"))
+            {
+                slacker = inFile.ReadLine();
+
+                while (slacker != null)
+                {
+                    tokens = slacker.Split('\t');
+                    comments.Add(new Comment(tokens));
 
                     slacker = inFile.ReadLine();
                 }
@@ -570,34 +586,45 @@ namespace Assignment3
 
             String awards; // string for title
 
+            bool silver = false;
+            bool gold = false;
+            bool plat = false;
+
             // check which boxes are checked and fix the title accordingly
             if (silverBox.Checked && goldBox.Checked && platBox.Checked)
             {
                 awards = silverBox.Text + ", " + goldBox.Text + ", and " + platBox.Text;
+                silver = gold = plat = true;
             }
             else if (silverBox.Checked && goldBox.Checked && !platBox.Checked)
             {
                 awards = silverBox.Text + ", and " + goldBox.Text;
+                silver = gold = true;
             }
             else if (silverBox.Checked && !goldBox.Checked && platBox.Checked)
             {
                 awards = silverBox.Text + ", and " + platBox.Text;
+                silver = plat = true;
             }
             else if (!silverBox.Checked && goldBox.Checked && platBox.Checked)
             {
                 awards = goldBox.Text + ", and " + platBox.Text;
+                gold = plat = true;
             }
             else if (silverBox.Checked && !goldBox.Checked && !platBox.Checked)
             {
                 awards = silverBox.Text;
+                silver = true;
             }
             else if (!silverBox.Checked && goldBox.Checked && !platBox.Checked)
             {
                 awards = goldBox.Text;
+                gold = true;
             }
             else if (!silverBox.Checked && !goldBox.Checked && platBox.Checked)
             {
                 awards = platBox.Text;
+                plat = true;
             }
             else
             {
@@ -631,7 +658,8 @@ namespace Assignment3
                 {
                     tempPosts.Add(p);
                 }
-
+                //used for debugging
+                outPutBox.Items.Add(tempPosts.Count);              
                 // if empty
                 if (tempPosts.Count == 0)
                 {
@@ -647,15 +675,15 @@ namespace Assignment3
                                        select C;
 
                         // add awards depending on which boxes are checked
-                        if (silverBox.Checked)
+                        if (silver)
                         {
-                            silvercount[0] += tp.Awards[0];
+                            silvercount[0] = silvercount[0] + tp.Awards[0];
                         }
-                        if (goldBox.Checked)
+                        if (gold)
                         {
                             goldcount[0] += tp.Awards[1];
                         }
-                        if (platBox.Checked)
+                        if (plat)
                         {
                             platcount[0] += tp.Awards[2];
                         }
@@ -666,47 +694,53 @@ namespace Assignment3
                             tempComments.Add(c);
                         }
 
-
-                        foreach (Comment c in tempComments)
+                        if (tempComments.Count() == 0)
                         {
-                            //temporary id
-                            uint tempId = c.ID;
+                            outPutBox.Text = "No comments found with the given criteria.";
+                        }
+                        else
+                        {
+                            foreach (Comment c in tempComments)
+                            {
+                                //temporary id
+                                uint tempId = c.ID;
 
-                            // for each comment where the parent id matches the id of a comment
-                            var cQ1 = from C in comments
-                                      where C.ParentID == tempId
-                                      select C;
+                                // for each comment where the parent id matches the id of a comment
+                                var cQ1 = from C in comments
+                                          where C.ParentID == tempId
+                                          select C;
 
-                            
-                            // check if boxes are checked and add awards
-                            if (silverBox.Checked)
-                            {
-                                silvercount[1] += c.Awards[0];
-                            }
-                            if (goldBox.Checked)
-                            {
-                                goldcount[1] += c.Awards[1];
-                            }
-                            if (platBox.Checked)
-                            {
-                                platcount[1] += c.Awards[2];
-                            }    
-                            
-                            // check if boxes are checked and add awards
-                            // for every reply to a comment
-                            foreach (var c1 in cQ1)
-                            {
-                                if (silverBox.Checked)
+
+                                // check if boxes are checked and add awards
+                                if (silver)
                                 {
-                                    silvercount[2] += c.Awards[0];
+                                    silvercount[1] += c.Awards[0];
                                 }
-                                if (goldBox.Checked)
+                                if (gold)
                                 {
-                                    goldcount[2] += c.Awards[1];
+                                    goldcount[1] += c.Awards[1];
                                 }
-                                if (platBox.Checked)
+                                if (plat)
                                 {
-                                    platcount[2] += c.Awards[1];
+                                    platcount[1] += c.Awards[2];
+                                }
+
+                                // check if boxes are checked and add awards
+                                // for every reply to a comment
+                                foreach (var c1 in cQ1)
+                                {
+                                    if (silver)
+                                    {
+                                        silvercount[2] += c.Awards[0];
+                                    }
+                                    if (gold)
+                                    {
+                                        goldcount[2] += c.Awards[1];
+                                    }
+                                    if (plat)
+                                    {
+                                        platcount[2] += c.Awards[1];
+                                    }
                                 }
                             }
                         }
@@ -715,7 +749,7 @@ namespace Assignment3
                 }
 
                 // outputs based on what box is checked
-                if (silverBox.Checked)
+                if (silver)
                 {
                     outPutBox.Items.Add("Silver Awards for Posts: " + silvercount[0]);
                     outPutBox.Items.Add("Silver Awards for Top Line Comments: " + silvercount[1]);
@@ -723,7 +757,7 @@ namespace Assignment3
                     outPutBox.Items.Add("");
                     outPutBox.Items.Add("");
                 }
-                if (goldBox.Checked)
+                if (gold)
                 {
                     outPutBox.Items.Add("Gold Awards for Posts: " + goldcount[0]);
                     outPutBox.Items.Add("Gold Awards for Top Line Comments: " + goldcount[1]);
@@ -731,7 +765,7 @@ namespace Assignment3
                     outPutBox.Items.Add("");
                     outPutBox.Items.Add("");
                 }
-                if (platBox.Checked)
+                if (plat)
                 {
                     outPutBox.Items.Add("Platinum Awards for Posts: " + platcount[0]);
                     outPutBox.Items.Add("Platinum Awards for Top Line Comments: " + platcount[1]);
@@ -1100,6 +1134,189 @@ namespace Assignment3
         private void subredditBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             subredditButton.Enabled = true;
+        }
+
+        private void pointsThresholdButton_Click(object sender, EventArgs e)
+        {
+            SortedSet<User> users = new SortedSet<User>();
+            SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
+            SortedSet<Subreddit> tempSubreddits = new SortedSet<Subreddit>();
+            List<Post> posts = new List<Post>();
+            List<Post> tempPost = new List<Post>();
+            List<Comment> comments = new List<Comment>();
+
+            ReadInputFiles(users, subreddits, posts, comments);
+
+            int selectedScore = Convert.ToInt32(scoreUpDown.Value);
+
+            if (lessOrEqual.Checked)
+            {
+                outPutBox.Items.Add("List of Posts/Comments With a Score Less than or Equal To " + selectedScore + ":");
+                outPutBox.Items.Add("--------------------------------------------------------------------------------------------------------------------------------------------------" + Environment.NewLine);
+                outPutBox.Items.Add("Posts:");
+
+                var postQ = from P in posts
+                            where P.Score <= selectedScore
+                            select P;
+
+                foreach (var p in postQ)
+                {
+                    tempPost.Add(p);
+                }
+                foreach (var p in tempPost)
+                {
+                    if (p.Title == null)
+                        continue;
+                    if(p.Title.Length > 35)//If the title of the post is too long, truncate it and add "..."
+                    {
+                        p.Title = p.Title.Substring(0, 35);
+                        outPutBox.Items.Add(p.Title + "... -- " + p.Score + Environment.NewLine);
+                    }
+                    else//Else title is short, so just print the whole thing
+                    {
+                        outPutBox.Items.Add(p.Title + " -- " + p.Score + Environment.NewLine);
+                    }
+                }
+
+                outPutBox.Items.Add("");
+                outPutBox.Items.Add("Top Level Comments:");
+
+                var commentQ = from C in comments
+                               where C.Score <= selectedScore
+                               from P in posts
+                               where C.ParentID == P.Id
+                               select C;
+
+                foreach (var c in commentQ)
+                {
+                    // program is reading empty (corrupted?) data and this line is a way to temporarily bypass it
+                    if (c.Content == null)
+                        continue;
+                    if (c.Content.Length > 35)//If the title of the post is too long, truncate it and add "..."
+                    {
+                        c.Content = c.Content.Substring(0, 35);
+                        outPutBox.Items.Add(c.Content + "... -- " + c.Score + Environment.NewLine);
+                    }
+                    else//Else title is short, so just print the whole thing
+                    {
+                        outPutBox.Items.Add(c.Content + " -- " + c.Score + Environment.NewLine);
+                    }
+                    
+                }
+
+                outPutBox.Items.Add("");
+                outPutBox.Items.Add("Comment Replies:");
+
+                
+                var tempQ = from C in comments
+                            select C;
+                foreach (var t in tempQ)
+                {
+                    var replyQ = from C in comments
+                                 where C.ParentID == t.ID && C.Score <= selectedScore
+                                 select C;
+                    foreach (var r in replyQ)
+                    {
+                        if (r.Content == null)
+                            continue;
+                        if (r.Content.Length > 35)//If the title of the post is too long, truncate it and add "..."
+                        {
+                            r.Content = r.Content.Substring(0, 35);
+                            outPutBox.Items.Add(r.Content + "... -- " + r.Score + Environment.NewLine);
+                        }
+                        else//Else title is short, so just print the whole thing
+                        {
+                            outPutBox.Items.Add(r.Content + " -- " + r.Score + Environment.NewLine);
+                        }
+
+                    }
+                }
+
+                outPutBox.Items.Add("");
+                outPutBox.Items.Add("");
+                outPutBox.Items.Add("*** END OF QUERY RESULTS ***");
+            }
+            else if (greaterOrEqual.Checked)
+            {
+                outPutBox.Items.Add("List of Posts/Comments With a Score Greater than or Equal To " + selectedScore + ":");
+                outPutBox.Items.Add("--------------------------------------------------------------------------------------------------------------------------------------------------" + Environment.NewLine);
+                outPutBox.Items.Add("Posts:");
+
+                var postQ = from P in posts
+                            where P.Score >= selectedScore
+                            select P;
+
+                foreach (var p in postQ)
+                {
+                    tempPost.Add(p);
+                }
+                foreach (var p in tempPost)
+                {
+                    if (p.Title == null)
+                        continue;
+                    if (p.Title.Length > 35)//If the title of the post is too long, truncate it and add "..."
+                    {
+                        p.Title = p.Title.Substring(0, 35);
+                        outPutBox.Items.Add(p.Title + "... -- " + p.Score + Environment.NewLine);
+                    }
+                    else//Else title is short, so just print the whole thing
+                    {
+                        outPutBox.Items.Add(p.Title + " -- " + p.Score + Environment.NewLine);
+                    }
+                }
+
+                outPutBox.Items.Add("");
+                outPutBox.Items.Add("Top Level Comments:");
+
+                var commentQ = from C in comments
+                               from P in posts
+                               where C.Score >= selectedScore && C.ParentID == P.Id
+                               select C;
+
+                foreach (var c in commentQ)
+                {
+                    if (c.Content == null)
+                        continue;
+                    if (c.Content.Length > 35)//If the title of the post is too long, truncate it and add "..."
+                    {
+                        c.Content = c.Content.Substring(0, 35);
+                        outPutBox.Items.Add(c.Content + "... -- " + c.Score + Environment.NewLine);
+                    }
+                    else//Else title is short, so just print the whole thing
+                    {
+                        outPutBox.Items.Add(c.Content + " -- " + c.Score + Environment.NewLine);
+                    }
+
+                }
+
+                outPutBox.Items.Add("");
+                outPutBox.Items.Add("Comment Replies:");
+
+                var replyQ = from C in comments
+                             from C1 in comments
+                             where C.ParentID == C1.ID && C.Score >= selectedScore
+                             select C;
+
+                foreach (var r in replyQ)
+                {
+                    if (r.Content == null)
+                        continue;
+                    if (r.Content.Length > 35)//If the title of the post is too long, truncate it and add "..."
+                    {
+                        r.Content = r.Content.Substring(0, 35);
+                        outPutBox.Items.Add(r.Content + "... -- " + r.Score + Environment.NewLine);
+                    }
+                    else//Else title is short, so just print the whole thing
+                    {
+                        outPutBox.Items.Add(r.Content + " -- " + r.Score + Environment.NewLine);
+                    }
+
+                }
+
+                outPutBox.Items.Add("");
+                outPutBox.Items.Add("");
+                outPutBox.Items.Add("*** END OF QUERY RESULTS ***");
+            }
         }
     }
 }
