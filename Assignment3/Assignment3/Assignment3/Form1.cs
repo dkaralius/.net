@@ -753,25 +753,25 @@ namespace Assignment3
                 // outputs based on what box is checked
                 if (silver)
                 {
-                    outPutBox.Items.Add("Silver Awards for Posts: " + silvercount[0]);
-                    outPutBox.Items.Add("Silver Awards for Top Line Comments: " + silvercount[1]);
-                    outPutBox.Items.Add("Silver Awards for Comment Replies: " + silvercount[2]);
+                    outPutBox.Items.Add("\tSilver Awards for Posts: " + silvercount[0]);
+                    outPutBox.Items.Add("\tSilver Awards for Top Line Comments: " + silvercount[1]);
+                    outPutBox.Items.Add("\tSilver Awards for Comment Replies: " + silvercount[2]);
                     outPutBox.Items.Add("");
                     outPutBox.Items.Add("");
                 }
                 if (gold)
                 {
-                    outPutBox.Items.Add("Gold Awards for Posts: " + goldcount[0]);
-                    outPutBox.Items.Add("Gold Awards for Top Line Comments: " + goldcount[1]);
-                    outPutBox.Items.Add("Gold Awards for Comment Replies: " + goldcount[2]);
+                    outPutBox.Items.Add("\tGold Awards for Posts: " + goldcount[0]);
+                    outPutBox.Items.Add("\tGold Awards for Top Line Comments: " + goldcount[1]);
+                    outPutBox.Items.Add("\tGold Awards for Comment Replies: " + goldcount[2]);
                     outPutBox.Items.Add("");
                     outPutBox.Items.Add("");
                 }
                 if (plat)
                 {
-                    outPutBox.Items.Add("Platinum Awards for Posts: " + platcount[0]);
-                    outPutBox.Items.Add("Platinum Awards for Top Line Comments: " + platcount[1]);
-                    outPutBox.Items.Add("Platinum Awards for Comment Replies: " + platcount[2]);
+                    outPutBox.Items.Add("\tPlatinum Awards for Posts: " + platcount[0]);
+                    outPutBox.Items.Add("\tPlatinum Awards for Top Line Comments: " + platcount[1]);
+                    outPutBox.Items.Add("\tPlatinum Awards for Comment Replies: " + platcount[2]);
                     outPutBox.Items.Add("");
                     outPutBox.Items.Add("");
                 }
@@ -799,7 +799,7 @@ namespace Assignment3
             ReadInputFiles(users, subreddits, posts, comments);
 
 
-            outPutBox.Items.Add("Subreddits Post To By '" + userBox.SelectedItem.ToString() + "':");
+            outPutBox.Items.Add("Subreddits Posted To By '" + userBox.SelectedItem.ToString() + "':");
             outPutBox.Items.Add("--------------------------------------------------------------------------------------------------------------------------------------------------" + Environment.NewLine);
 
             //Query that outputs all posts that match the date provided by user
@@ -837,7 +837,7 @@ namespace Assignment3
                 //Print results
                 foreach (Subreddit s in tempSubreddits)
                 {
-                    outPutBox.Items.Add(s.Name + Environment.NewLine);
+                    outPutBox.Items.Add(s.Name.PadLeft(20) + Environment.NewLine);
                 }
                 outPutBox.Items.Add("");
                 outPutBox.Items.Add("");
@@ -940,7 +940,7 @@ namespace Assignment3
                 {
                     foreach (Subreddit s in subreddits.Where(x => x.Id == v.subreddit))
                     {
-                        outPutBox.Items.Add(s.Name + " --- " + v.max);
+                        outPutBox.Items.Add(s.Name.PadLeft(30) + " --- " + v.max.ToString().PadLeft(10));
                     }
                 }
 
@@ -973,7 +973,7 @@ namespace Assignment3
                 {
                     foreach (Subreddit s in subreddits.Where(x => x.Id == v.subreddit))
                     {
-                        outPutBox.Items.Add(s.Name + " --- " + v.avg.ToString("#.00"));
+                        outPutBox.Items.Add(s.Name.PadLeft(30) + " --- " + v.avg.ToString("#.00").PadLeft(10));
                     }
                 }
 
@@ -1006,7 +1006,7 @@ namespace Assignment3
                 {
                     foreach (Subreddit s in subreddits.Where(x => x.Id == v.subreddit))
                     {
-                        outPutBox.Items.Add(s.Name + " --- " + v.min);
+                        outPutBox.Items.Add(s.Name.PadLeft(30) + " --- " + v.min.ToString().PadLeft(10));
                     }
                 }
 
@@ -1058,7 +1058,7 @@ namespace Assignment3
                 {
                     foreach (User u in users.Where(x => x.Id == v.user))
                     {
-                        outPutBox.Items.Add(u.Name + " --- " + v.max);
+                        outPutBox.Items.Add(u.Name.PadLeft(30) + " --- " + v.max.ToString().PadLeft(10));
                     }
                 }
 
@@ -1093,7 +1093,7 @@ namespace Assignment3
                 {
                     foreach (User u in users.Where(x => x.Id == v.user))
                     {
-                        outPutBox.Items.Add(u.Name + " --- " + v.avg.ToString("#.00"));
+                        outPutBox.Items.Add(u.Name.PadLeft(30) + " --- " + v.avg.ToString("#.00").PadLeft(10));
                     }
                 }
 
@@ -1129,7 +1129,7 @@ namespace Assignment3
                 {
                     foreach (User u in users.Where(x => x.Id == v.user))
                     {
-                        outPutBox.Items.Add(u.Name + " --- " + v.min);
+                        outPutBox.Items.Add(u.Name.PadLeft(30) + " --- " + v.min.ToString().PadLeft(10));
                     }
                 }
 
