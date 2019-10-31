@@ -412,8 +412,8 @@ namespace Assignment4
 
             public System.Windows.Forms.ToolStrip scoreStrip;
             public System.Windows.Forms.ToolStripLabel scoreLabel;
-            public System.Windows.Forms.ToolStripLabel upArrowLabel;
-            public ToolStripLabel downArrowLabel;
+            public ToolStripButton upArrowLabel;
+            public ToolStripButton downArrowLabel;
 
             public System.Windows.Forms.Panel PostPanel
             {
@@ -457,13 +457,13 @@ namespace Assignment4
                 set { scoreLabel = value; }
             }
 
-            public System.Windows.Forms.ToolStripLabel UpArrowLabel
+            public ToolStripButton UpArrowLabel
             {
                 get { return upArrowLabel; }
                 set { upArrowLabel = value; }
             }
 
-            public ToolStripLabel DownARrowLabel
+            public ToolStripButton DownARrowLabel
             {
                 get { return downArrowLabel; }
                 set { downArrowLabel = value; }
@@ -484,9 +484,9 @@ namespace Assignment4
 
                 scoreLabel = new System.Windows.Forms.ToolStripLabel();
 
-                upArrowLabel = new ToolStripLabel();
+                upArrowLabel = new ToolStripButton();
 
-                downArrowLabel = new ToolStripLabel();
+                downArrowLabel = new ToolStripButton();
             }
 
             public DisplayPost(string reddit, string title, string author, DateTime time, int score, int count)
@@ -513,12 +513,12 @@ namespace Assignment4
                 }
                 
 
-                upArrowLabel = new ToolStripLabel();
+                upArrowLabel = new ToolStripButton();
                 System.Drawing.Image upArrow = System.Drawing.Image.FromFile("upArrow.png");
                 upArrowLabel.Text = String.Empty;
                 upArrowLabel.Image = upArrow;
 
-                downArrowLabel = new ToolStripLabel();
+                downArrowLabel = new ToolStripButton();
                 System.Drawing.Image downArrow = System.Drawing.Image.FromFile("downArrow.png");
                 downArrowLabel.Text = String.Empty;
                 downArrowLabel.Image = downArrow;
