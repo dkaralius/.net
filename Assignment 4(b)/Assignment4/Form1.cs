@@ -405,6 +405,7 @@ namespace Assignment4
         {
             public System.Windows.Forms.Panel postPanel;
             public System.Windows.Forms.Label redditLabel;
+            public System.Windows.Forms.Label contentLabel;
             public System.Windows.Forms.Label userLabel;
             public System.Windows.Forms.Label timeLabel;
             public System.Windows.Forms.Label titleLabel;
@@ -422,6 +423,11 @@ namespace Assignment4
             {
                 get { return redditLabel; }
                 set { redditLabel = value; }
+            }
+            public System.Windows.Forms.Label ContentLabel
+            {
+                get { return contentLabel; }
+                set { contentLabel = value; }
             }
 
             public System.Windows.Forms.Label UserLabel
@@ -452,6 +458,8 @@ namespace Assignment4
 
                 redditLabel = new System.Windows.Forms.Label();
 
+                contentLabel = new System.Windows.Forms.Label();
+
                 userLabel = new System.Windows.Forms.Label();
 
                 timeLabel = new System.Windows.Forms.Label();
@@ -475,6 +483,35 @@ namespace Assignment4
                 redditLabel.Location = new Point(0, 4);
                 int x = RedditLabel.PreferredWidth;
                 int y = redditLabel.PreferredHeight;
+
+                titleLabel = new System.Windows.Forms.Label();
+                titleLabel.ForeColor = Color.White;
+                titleLabel.AutoSize = true;
+                titleLabel.MaximumSize = new Size(800, 0);
+                titleLabel.Font = new Font("Verdana", 12);
+                titleLabel.Text = title;
+                titleLabel.Location = new Point(0, y + 10);
+
+                contentLabel = new System.Windows.Forms.Label();
+                contentLabel.AutoSize = true;
+                contentLabel.Text = content;
+                contentLabel.ForeColor = Color.Gray;
+                contentLabel.MaximumSize = new Size(800, 0);
+                contentLabel.Font = new Font("Verdana", 12);
+
+                if(content.Length < 100 && title.Length < 100)
+                {
+                    contentLabel.Location = new Point(15, y + 40);
+                }
+                if(content.Length < 100 && title.Length > 100)
+                {
+                    contentLabel.Location = new Point(15, y + 50);
+                }
+                if (content.Length > 200)
+                {
+                    contentLabel.Location = new Point(15, y + 30);
+                }
+
 
                 userLabel = new System.Windows.Forms.Label();
                 userLabel.ForeColor = Color.Gray;
@@ -565,16 +602,8 @@ namespace Assignment4
                         timeLabel.Text = "a year ago";
                     }
                 }
-
-                titleLabel = new System.Windows.Forms.Label();
-                titleLabel.ForeColor = Color.White;
-                titleLabel.AutoSize = true;
-                titleLabel.MaximumSize = new Size(800, 0);
-                titleLabel.Font = new Font("Verdana", 14);
-                titleLabel.Text = title;
-                titleLabel.Location = new Point(0, y + 10);
-
                 postPanel.Controls.Add(redditLabel);
+                postPanel.Controls.Add(contentLabel);
                 postPanel.Controls.Add(userLabel);
                 postPanel.Controls.Add(timeLabel);
                 postPanel.Controls.Add(titleLabel);
@@ -708,10 +737,10 @@ namespace Assignment4
 
             foreach (DisplayPost d in displays)
             {
-                d.PostPanel.Tag = d.redditLabel;
                 d.PostPanel.Click += new EventHandler(panel1_Click);
-
+                d.postPanel.AutoSize = true;
                 mainPanel.Controls.Add(d.postPanel);
+                d.PostPanel.Tag = d.titleLabel.Text;
             }
 
             foreach(Subreddit s in subreddits)
@@ -729,23 +758,214 @@ namespace Assignment4
         private void panel1_Click(object sender, EventArgs e)
         {
             System.Windows.Forms.Panel p = sender as System.Windows.Forms.Panel;
-            string test = (p.Tag).ToString();
-            string test2 = test.Substring(test.IndexOf('/') + -1);
+            string title = (p.Tag).ToString();
+            title = title.Substring(title.IndexOf(':') + 1);
+
+            SortedSet<User> users = new SortedSet<User>();
+            SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
+            List<Post> posts = new List<Post>();
+            List<Comment> comments = new List<Comment>();
+            List<DisplayPost> displays = new List<DisplayPost>();
+
+            ReadInputFiles(users, subreddits, posts, comments);
 
             Form newForm = new Form();
+            newForm.Size = new Size(800, 500);
+            newForm.BackColor = Color.Black;
             newForm.StartPosition = FormStartPosition.CenterParent;
             newForm.MaximizeBox = false;
             newForm.MinimizeBox = false;
             newForm.FormBorderStyle = FormBorderStyle.FixedSingle;
+            newForm.Text = "Information about post";
 
-            System.Windows.Forms.Label newLabel = new System.Windows.Forms.Label();
+            System.Windows.Forms.Label redditLabel = new System.Windows.Forms.Label();
+            System.Windows.Forms.Label titleLabel = new System.Windows.Forms.Label();
+            System.Windows.Forms.Label contentLabel = new System.Windows.Forms.Label();
+            System.Windows.Forms.Label timeLabel = new System.Windows.Forms.Label();
+            System.Windows.Forms.TextBox commentBox = new System.Windows.Forms.TextBox();
 
-            newLabel.Location = new Point(13, 13);
-            newLabel.Text = test2;
+            foreach (Post ps in posts.Where( x=> x.Title == title.Trim()))
+            {
 
-            newForm.Controls.Add(newLabel);
+                foreach(Subreddit s in subreddits.Where( xyz => xyz.Id == ps.SubHome))
+                {
+                    redditLabel = new System.Windows.Forms.Label();
+                    redditLabel.ForeColor = Color.White;
+                    redditLabel.Text = "r/" + s.Name;
+                    redditLabel.AutoSize = true;
+                    redditLabel.Font = new Font("Verdana", 8);
+                    redditLabel.Location = new Point(0, 10);
+                }
+                int x = redditLabel.PreferredWidth;
+                int y = redditLabel.PreferredHeight;
+
+                titleLabel.AutoSize = true;
+                titleLabel.Text = title;
+                titleLabel.ForeColor = Color.White;
+                titleLabel.MaximumSize = new Size(520, 0);
+                titleLabel.Font = new Font("Verdana", 14);
+                titleLabel.Location = new Point(x - 8, 4);
+
+                int x2 = titleLabel.PreferredWidth;
+                int y2 = titleLabel.PreferredHeight;
+
+                contentLabel.AutoSize = true;
+                contentLabel.Text = ps.PostContent;
+                contentLabel.ForeColor = Color.Gray;
+                contentLabel.MaximumSize = new Size(520, 0);
+                contentLabel.Font = new Font("Verdana", 10);
+                contentLabel.Location = new Point(15, y2 + 7);
+
+                foreach (User u in users.Where(xy => xy.Id == ps.AuthorID))
+                {
+                    userLabel = new System.Windows.Forms.Label();
+                    userLabel.ForeColor = Color.Gray;
+                    userLabel.Text = "| Posted by u/" + u.Name;
+                    userLabel.AutoSize = true;
+                    userLabel.Font = new Font("Verdana", 8);
+                    userLabel.Location = new Point(x2 + 40, 9);
+                }
+
+                int x3 = userLabel.PreferredWidth;
+
+                timeLabel = new System.Windows.Forms.Label();
+                timeLabel.ForeColor = Color.Gray;
+                timeLabel.AutoSize = true;
+                timeLabel.Font = new Font("Verdana", 8);
+                timeLabel.Location = new Point(x2 + x3 + 40, 9);
+
+                DateTime now = DateTime.Now;
+                DateTime time = ps.TimeStamp;
+                TimeSpan ts = now - time;
+
+                int days = ts.Days;
+                int hours = ts.Hours;
+                int minutes = ts.Minutes;
+
+                //If was posted within the year, continue
+                if (days < 365)
+                {
+                    //If the year and month are the same, continue
+                    if (time.Month == now.Month)
+                    {
+                        if (time.Day == now.Day)
+                        {
+
+                        }
+                        //Else, the year and month are the same, but date is different
+                        else
+                        {
+                            //More than 1 day ago
+                            if ((now.Day - time.Day) > 1)
+                            {
+                                timeLabel.Text = (now.Day - time.Day) + " days ago";
+                            }
+                            //Exactly 1 day ago
+                            if ((now.Day - time.Day) == 1)
+                            {
+                                timeLabel.Text = "a day ago";
+                            }
+                            //Less than a day ago
+                            else
+                            {
+                                //If there are less than 24 hours but greater than 1 hour between now and post time, print difference
+                                if (hours < 24 && hours >= 1)
+                                {
+                                    timeLabel.Text = hours + " hours ago";
+                                }
+                                //Else, less than an hour between the two times
+                                else
+                                {
+                                    timeLabel.Text = minutes + " hours ago";
+                                }
+                            }
+                        }
+                    }
+                    //Else, year is the same, but month is different, print difference
+                    else
+                    {
+                        //More than 1 month ago
+                        if ((now.Month - time.Month) > 1)
+                        {
+                            timeLabel.Text = (now.Month - time.Month) + " months ago";
+                        }
+                        //1 month ago
+                        else
+                        {
+                            timeLabel.Text = (now.Month - time.Month) + " month ago";
+                        }
+                    }
+                }
+                //Else post is greater than or equal to a year old, continue
+                else
+                {
+                    //If difference between years is greater than 1
+                    if ((now.Year - time.Year) > 1)
+                    {
+                        timeLabel.Text = (now.Year - time.Year) + "years ago";
+                    }
+                    //Else, difference is a year ago
+                    else
+                    {
+                        timeLabel.Text = "a year ago";
+                    }
+                }
+            }
+            commentBox = new System.Windows.Forms.TextBox();
+
+            commentBox.Click += new EventHandler(commentBox_Enter);
+            commentBox.Leave += new EventHandler(commentBox_Leave);
+            commentBox_SetText();
+
+            commentBox.Multiline = true;
+            commentBox.Size = new Size(760, 200);
+            commentBox.Location = new Point(12, 100);
+            commentBox.SelectionStart = 0;
+
+            newForm.Controls.Add(redditLabel);
+            newForm.Controls.Add(titleLabel);
+            newForm.Controls.Add(contentLabel);
+            newForm.Controls.Add(userLabel);
+            newForm.Controls.Add(timeLabel);
+            newForm.Controls.Add(commentBox);
+
 
             newForm.ShowDialog();
+
+            //Function and event handlers for the comment box
+            void commentBox_SetText()
+            {
+                    commentBox.Text = "What are your thoughts?";
+                    commentBox.ForeColor = Color.Gray;
+                    return;
+            }
+            void commentBox_Enter(object sender2, EventArgs e2)
+            {
+                if (commentBox.ForeColor == Color.Black)
+                {
+                    return;
+                }
+                commentBox.Text = "";
+                commentBox.ForeColor = Color.Black;
+
+                commentBox.KeyDown += commentBox_KeyDown;
+
+                void commentBox_KeyDown(object sender3, KeyEventArgs e3)
+                {
+                    if (e3.KeyCode == Keys.Enter)
+                    {
+                        //Just to see if its working
+                        commentBox.Text = "you pressed enter";
+                    }
+                }
+            }
+            void commentBox_Leave(object sender4, EventArgs e4)
+            {
+                if (commentBox.Text.Trim() == "")
+                {
+                    commentBox_SetText();
+                }
+            }
         }
 
         //Event handler for when user clicks the log in button
@@ -927,9 +1147,13 @@ namespace Assignment4
                 }
                 foreach (DisplayPost d in displays)
                 {
-                    d.PostPanel.Tag = d.redditLabel;
+                    d.PostPanel.Tag = d.titleLabel;
                     d.PostPanel.Click += new EventHandler(panel1_Click);
-
+                    d.postPanel.AutoSize = true;
+                    if(d.titleLabel.ToString().Length > 80)
+                    {
+                        d.postPanel.Height = 100;
+                    }
                     mainPanel.Controls.Add(d.postPanel);
                     mainPanel.AutoScroll = true;
                 }

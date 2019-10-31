@@ -59,10 +59,11 @@
             // 
             this.mainPanel.AutoScroll = true;
             this.mainPanel.AutoSize = true;
+            this.mainPanel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.mainPanel.Location = new System.Drawing.Point(11, 69);
             this.mainPanel.Margin = new System.Windows.Forms.Padding(2);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(614, 421);
+            this.mainPanel.Size = new System.Drawing.Size(0, 0);
             this.mainPanel.TabIndex = 3;
             // 
             // panel2
