@@ -658,6 +658,14 @@ namespace Assignment4
         {
             InitializeComponent();
             CenterToScreen();
+
+            //Disbales minimize and maximize buttons
+            MinimizeBox = false;
+            MaximizeBox = false;
+
+            //Prevents resizing of window
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+
             panel2.BackColor = Color.FromArgb(219, 223, 232);
 
             searchTextBox.Enter += new EventHandler(searchTextBox_Enter);
@@ -728,6 +736,7 @@ namespace Assignment4
             newForm.StartPosition = FormStartPosition.CenterParent;
             newForm.MaximizeBox = false;
             newForm.MinimizeBox = false;
+            newForm.FormBorderStyle = FormBorderStyle.FixedSingle;
 
             System.Windows.Forms.Label newLabel = new System.Windows.Forms.Label();
 
@@ -745,7 +754,9 @@ namespace Assignment4
             if(logInButton.Text == "Log Out")
             {
                 logInButton.Text = "Log In";
-                userLabel.Text = " ";
+                userLabel.Text = "";
+                karmaLabel.Text = "";
+
                 return;
             }
             if (logInButton.Text == "Log In")
@@ -756,6 +767,7 @@ namespace Assignment4
                 logForm.BackColor = Color.FromArgb(219, 223, 232);
                 logForm.MaximizeBox = false;
                 logForm.MinimizeBox = false;
+                logForm.FormBorderStyle = FormBorderStyle.FixedSingle;
                 logForm.Text = "Log-In";
 
                 System.Windows.Forms.Label Prompt = new System.Windows.Forms.Label();
@@ -856,6 +868,15 @@ namespace Assignment4
                         {
                             logForm.Close();
                             logInButton.Text = "Log Out";
+
+                            int karma = 0; //Sum of post score and comment score for the user
+
+                            foreach(User u in users.Where(x => x.Name == userLabel.Text))
+                            {
+                                karma = u.PostScore + u.CommentScore;
+                                karmaLabel.Text = "Karma " + String.Format("{0:n0}", karma);
+                                karmaLabel.Font = new Font("Verdana", 8);
+                            }
                         }
                     }
                 }
@@ -968,7 +989,71 @@ namespace Assignment4
             {
                 if (e2.KeyCode == Keys.Enter)
                 {
-                    //Will continue tomorrow
+                    mainPanel.Controls.Clear();
+
+                    SortedSet<User> users = new SortedSet<User>();
+                    SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
+                    List<Post> posts = new List<Post>();
+                    List<Comment> comments = new List<Comment>();
+                    List<DisplayPost> displays = new List<DisplayPost>();
+
+                    ReadInputFiles(users, subreddits, posts, comments);
+
+                    string temp = searchTextBox.Text;
+                    temp = temp.ToLower();
+
+                    int count = 0;
+                    var pLinq = from P in posts
+                                orderby P.Score descending
+                                select P;
+
+                    foreach (Post p in pLinq)
+                    {
+                        var srLinq = from S in subreddits
+                                     where S.Id == p.SubHome
+                                     select S;
+
+                        var uLinq = from U in users
+                                    where U.Id == p.AuthorID
+                                    select U;
+
+                        foreach (Subreddit s in srLinq)
+                        {
+                            foreach (User u in uLinq)
+                            {
+                                if(p.PostContent.ToLower().Contains(temp) || p.Title.ToLower().Contains(temp))
+                                {
+                                    DisplayPost temp2 = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.PostContent, count);
+                                    displays.Add(temp2);
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    foreach (DisplayPost d in displays)
+                    {
+                        d.PostPanel.Tag = d.redditLabel;
+                        d.PostPanel.Click += new EventHandler(panel1_Click);
+
+                        mainPanel.Controls.Add(d.postPanel);
+                        mainPanel.AutoScroll = true;
+                    }
+
+                    //If no results come up from search, print error message
+                    string temp3 = displays.Count().ToString();
+                    if(temp3 == "0")
+                    {
+                        errorLabel.Text = "We're sorry, we found no results!";
+                        errorLabel.Font = new Font("Verdana", 12);
+                        errorLabel.ForeColor = Color.FromArgb(237, 67, 55);
+                        errorLabel.AutoSize = true;
+                        errorLabel.Location = new Point(325, 50);
+                    }
+                    //Else, reset message, if previously was triggered
+                    else
+                    {
+                        errorLabel.Text = "";
+                    }
                 }
             }
         }

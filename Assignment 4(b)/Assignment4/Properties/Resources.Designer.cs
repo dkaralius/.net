@@ -63,26 +63,6 @@ namespace Assignment4.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap reddit_logo_youtube_png_clipart_alien_area_blog_circle_reddit_logo_png_728_716 {
-            get {
-                object obj = ResourceManager.GetObject("reddit-logo-youtube-png-clipart-alien-area-blog-circle-reddit-logo-png-728_716", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap redditLogo {
-            get {
-                object obj = ResourceManager.GetObject("redditLogo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap redditLogo1 {
             get {
                 object obj = ResourceManager.GetObject("redditLogo1", resourceCulture);
