@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,6 +18,7 @@ namespace Assignment4
         //Globals
         string redditName;
         string userName;
+        bool logged;
 
 
         public class User : IComparable
@@ -406,14 +406,13 @@ namespace Assignment4
         {
             public System.Windows.Forms.Panel postPanel;
             public System.Windows.Forms.Label redditLabel;
+            public System.Windows.Forms.Label contentLabel;
             public System.Windows.Forms.Label userLabel;
             public System.Windows.Forms.Label timeLabel;
             public System.Windows.Forms.Label titleLabel;
+            //public System.Windows.Forms.Label scoreLabel;
 
-            public System.Windows.Forms.ToolStrip scoreStrip;
-            public System.Windows.Forms.ToolStripLabel scoreLabel;
-            public ToolStripButton upArrowLabel;
-            public ToolStripButton downArrowLabel;
+            string subredditName;
 
             public System.Windows.Forms.Panel PostPanel
             {
@@ -426,135 +425,274 @@ namespace Assignment4
                 get { return redditLabel; }
                 set { redditLabel = value; }
             }
+            public System.Windows.Forms.Label ContentLabel
+            {
+                get { return contentLabel; }
+                set { contentLabel = value; }
+            }
 
             public System.Windows.Forms.Label UserLabel
             {
                 get { return userLabel; }
                 set { userLabel = value; }
             }
-
             public System.Windows.Forms.Label TimeLabel
             {
                 get { return timeLabel; }
                 set { timeLabel = value; }
             }
 
-            public System.Windows.Forms.Label Titlelabel
+            public System.Windows.Forms.Label TitleLabel
             {
                 get { return titleLabel; }
                 set { titleLabel = value; }
             }
-
-            public System.Windows.Forms.ToolStrip ScoreStrip
+            public string SubredditName
             {
-                get { return scoreStrip; }
-                set { scoreStrip = value; }
+                get { return SubredditName; }
+                set { SubredditName = value; }
             }
 
-            public System.Windows.Forms.ToolStripLabel ScoreLabel
-            {
-                get { return scoreLabel; }
-                set { scoreLabel = value; }
-            }
-
-            public ToolStripButton UpArrowLabel
-            {
-                get { return upArrowLabel; }
-                set { upArrowLabel = value; }
-            }
-
-            public ToolStripButton DownARrowLabel
-            {
-                get { return downArrowLabel; }
-                set { downArrowLabel = value; }
-            }
             public DisplayPost()
             {
                 postPanel = new System.Windows.Forms.Panel();
 
                 redditLabel = new System.Windows.Forms.Label();
 
+                contentLabel = new System.Windows.Forms.Label();
+
                 userLabel = new System.Windows.Forms.Label();
 
                 timeLabel = new System.Windows.Forms.Label();
 
                 titleLabel = new System.Windows.Forms.Label();
 
-                scoreStrip = new System.Windows.Forms.ToolStrip();
-
-                scoreLabel = new System.Windows.Forms.ToolStripLabel();
-
-                upArrowLabel = new ToolStripButton();
-
-                downArrowLabel = new ToolStripButton();
+                string subredditName = null;
             }
 
-            public DisplayPost(string reddit, string title, string author, DateTime time, int score, int count)
+            public DisplayPost(string reddit, string title, string author, DateTime time, string content, int count)
             {
                 postPanel = new System.Windows.Forms.Panel();
 
-                scoreStrip = new ToolStrip();
-                scoreStrip.BackColor = Color.FromArgb(22, 22, 22);
-                scoreStrip.Dock = DockStyle.Left;
-                
-                /// scoreStrip.
-
-                scoreLabel = new System.Windows.Forms.ToolStripLabel();
-                scoreLabel.ForeColor = Color.White;
-                scoreLabel.AutoSize = true;
-                scoreLabel.Font = new Font("Verdana", 8);
-                if (score < 1000 && score > -1000)
-                {
-                    scoreLabel.Text = score.ToString();
-                }
-                else
-                {
-                    scoreLabel.Text = String.Format("{0: 0.#k}", Convert.ToDecimal(score) / 1000);
-                }
-                
-
-                upArrowLabel = new ToolStripButton();
-                System.Drawing.Image upArrow = System.Drawing.Image.FromFile("upArrow.png");
-                upArrowLabel.Text = String.Empty;
-                upArrowLabel.Image = upArrow;
-
-                downArrowLabel = new ToolStripButton();
-                System.Drawing.Image downArrow = System.Drawing.Image.FromFile("downArrow.png");
-                downArrowLabel.Text = String.Empty;
-                downArrowLabel.Image = downArrow;
-                
-                scoreStrip.Items.Add(upArrowLabel);
-                scoreStrip.Items.Add(scoreLabel);
-                scoreStrip.Items.Add(downArrowLabel);
+                subredditName = reddit;
 
                 redditLabel = new System.Windows.Forms.Label();
                 redditLabel.ForeColor = Color.White;
                 redditLabel.Text = "r/" + reddit;
                 redditLabel.AutoSize = true;
                 redditLabel.Font = new Font("Verdana", 12);
-                redditLabel.Location = new Point(scoreStrip.Bottom + 20, 4);
-                int x = RedditLabel.PreferredSize.Width + scoreStrip.Bottom;
+                redditLabel.Location = new Point(0, 4);
+                int x = RedditLabel.PreferredWidth;
+                int y = redditLabel.PreferredHeight;
+
+                titleLabel = new System.Windows.Forms.Label();
+                titleLabel.ForeColor = Color.White;
+                titleLabel.AutoSize = true;
+                titleLabel.MaximumSize = new Size(800, 0);
+                titleLabel.Font = new Font("Verdana", 12);
+                titleLabel.Text = title;
+                titleLabel.Location = new Point(0, y + 10);
+
+                contentLabel = new System.Windows.Forms.Label();
+                contentLabel.AutoSize = true;
+                contentLabel.Text = content;
+                contentLabel.ForeColor = Color.Gray;
+                contentLabel.MaximumSize = new Size(800, 0);
+                contentLabel.Font = new Font("Verdana", 12);
+
+                if(content.Length < 100 && title.Length < 100)
+                {
+                    contentLabel.Location = new Point(15, y + 40);
+                }
+                if(content.Length < 100 && title.Length > 100)
+                {
+                    contentLabel.Location = new Point(15, y + 50);
+                }
+                if (content.Length > 200)
+                {
+                    contentLabel.Location = new Point(15, y + 30);
+                }
+
 
                 userLabel = new System.Windows.Forms.Label();
                 userLabel.ForeColor = Color.Gray;
                 userLabel.Text = "| Posted by u/" + author;
                 userLabel.AutoSize = true;
                 userLabel.Font = new Font("Verdana", 8);
-                userLabel.Location = new Point(x + 10, 7);
+                userLabel.Location = new Point(x + 2, 7);
                 int x2 = userLabel.PreferredWidth;
-
-                titleLabel = new System.Windows.Forms.Label();
-                titleLabel.ForeColor = Color.White;
-                titleLabel.Text = title;
-                titleLabel.AutoSize = true;
-                titleLabel.Font = new Font("Verdana", 12);
-                titleLabel.Location = new Point(x, redditLabel.Height + 5);
 
                 timeLabel = new System.Windows.Forms.Label();
                 timeLabel.ForeColor = Color.Gray;
                 timeLabel.AutoSize = true;
                 timeLabel.Font = new Font("Verdana", 8);
-                timeLabel.Location = new Point(x + x2 + 11, 7);
+                timeLabel.Location = new Point(x + x2 + 5 , 7);
+
+                DateTime now = DateTime.Now;
+                TimeSpan ts = now - time;
+
+                int days = ts.Days;
+                int hours = ts.Hours;
+                int minutes = ts.Minutes;
+
+                //If was posted within the year, continue
+                if(days < 365)
+                {
+                    //If the year and month are the same, continue
+                    if(time.Month == now.Month)
+                    {
+                        if(time.Day == now.Day)
+                        {
+
+                        }
+                        //Else, the year and month are the same, but date is different
+                        else
+                        {
+                            //More than 1 day ago
+                            if((now.Day - time.Day) > 1)
+                            {
+                                timeLabel.Text = (now.Day - time.Day) + " days ago";
+                            }
+                            //Exactly 1 day ago
+                            if((now.Day - time.Day) == 1)
+                            {
+                                timeLabel.Text = "a day ago";
+                            }
+                            //Less than a day ago
+                            else
+                            {
+                                //If there are less than 24 hours but greater than 1 hour between now and post time, print difference
+                                if(hours < 24 && hours >= 1)
+                                {
+                                    timeLabel.Text = hours + " hours ago";
+                                }
+                                //Else, less than an hour between the two times
+                                else
+                                {
+                                    timeLabel.Text = minutes + " hours ago";
+                                }
+                            }
+                        }
+                    }
+                    //Else, year is the same, but month is different, print difference
+                    else
+                    {
+                        //More than 1 month ago
+                        if((now.Month - time.Month) > 1)
+                        {
+                            timeLabel.Text = (now.Month - time.Month) + " months ago";
+                        }
+                        //1 month ago
+                        else
+                        {
+                            timeLabel.Text = (now.Month - time.Month) + " month ago";
+                        }
+                    }
+                }
+                //Else post is greater than or equal to a year old, continue
+                else
+                {
+                    //If difference between years is greater than 1
+                    if((now.Year - time.Year) > 1)
+                    {
+                        timeLabel.Text = (now.Year - time.Year) + "years ago";
+                    }
+                    //Else, difference is a year ago
+                    else
+                    {
+                        timeLabel.Text = "a year ago";
+                    }
+                }
+                postPanel.Controls.Add(redditLabel);
+                postPanel.Controls.Add(contentLabel);
+                postPanel.Controls.Add(userLabel);
+                postPanel.Controls.Add(timeLabel);
+                postPanel.Controls.Add(titleLabel);
+
+                postPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+                postPanel.AutoSize = true;
+                postPanel.Location = new Point(10, postPanel.Height * count);
+                postPanel.Width = 850;
+            }
+        }
+        public class DisplayComment
+        {
+            //Panel where all info about a comment will be stored
+            public System.Windows.Forms.Panel commentPanel;
+
+            public System.Windows.Forms.Label userLabel; //Author
+            public System.Windows.Forms.Label scoreLabel; //Score
+            public System.Windows.Forms.Label timeLabel; //Time frame ago
+            public System.Windows.Forms.Label contentLabel; //Content
+
+            //Public properties
+            public System.Windows.Forms.Panel CommentPanel
+            {
+                get { return CommentPanel; }
+                set { CommentPanel = value; }
+            }
+            public System.Windows.Forms.Label UserLabel
+            {
+                get { return userLabel; }
+                set { userLabel = value; }
+            }
+            public System.Windows.Forms.Label ScoreLabel
+            {
+                get { return scoreLabel; }
+                set { scoreLabel = value; }
+            }
+            public System.Windows.Forms.Label TimeLabel
+            {
+                get { return timeLabel; }
+                set { timeLabel = value; }
+            }
+            public System.Windows.Forms.Label ContentLabel
+            {
+                get { return contentLabel; }
+                set { contentLabel = value; }
+            }
+
+            //Default constructor
+            public DisplayComment()
+            {
+                commentPanel = new System.Windows.Forms.Panel();
+                userLabel = new System.Windows.Forms.Label();
+                scoreLabel = new System.Windows.Forms.Label();
+                timeLabel = new System.Windows.Forms.Label();
+                contentLabel = new System.Windows.Forms.Label();
+            }
+
+            //Alternate constructor
+            public DisplayComment(string author, int score, DateTime time, string content, int count)
+            {
+                commentPanel = new System.Windows.Forms.Panel();
+
+                userLabel = new System.Windows.Forms.Label();
+                userLabel.ForeColor = Color.White;
+                userLabel.Text = "u/" + author;
+                userLabel.AutoSize = true;
+                userLabel.Font = new Font("Verdana", 12);
+                userLabel.Location = new Point(0, 4);
+
+                int x = UserLabel.PreferredWidth;
+                int y = UserLabel.PreferredHeight;
+
+                scoreLabel = new System.Windows.Forms.Label();
+                scoreLabel.ForeColor = Color.Gray;
+                scoreLabel.AutoSize = true;
+                scoreLabel.MaximumSize = new Size(800, 0);
+                scoreLabel.Font = new Font("Verdana", 8);
+                scoreLabel.Text = " | " + String.Format("{0:n0}",score + " points");
+                scoreLabel.Location = new Point(x - 4 , 7);
+
+                int x2 = ScoreLabel.PreferredWidth;
+                int y2 = scoreLabel.PreferredHeight;
+
+                timeLabel = new System.Windows.Forms.Label();
+                timeLabel.ForeColor = Color.Gray;
+                timeLabel.AutoSize = true;
+                timeLabel.Font = new Font("Verdana", 8);
+                timeLabel.Location = new Point(x + x2, 7 );
 
                 DateTime now = DateTime.Now;
                 TimeSpan ts = now - time;
@@ -632,16 +770,23 @@ namespace Assignment4
                     }
                 }
 
-                postPanel.Controls.Add(redditLabel);
-                postPanel.Controls.Add(userLabel);
-                postPanel.Controls.Add(timeLabel);
-                postPanel.Controls.Add(titleLabel);
-                postPanel.Controls.Add(scoreStrip);
+                contentLabel = new System.Windows.Forms.Label();
+                contentLabel.AutoSize = true;
+                contentLabel.Text = content;
+                contentLabel.ForeColor = Color.Gray;
+                contentLabel.MaximumSize = new Size(730, 0);
+                contentLabel.Font = new Font("Verdana", 10);
+                contentLabel.Location = new Point(2, 25);
 
-                postPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-                postPanel.AutoSize = true;
-                postPanel.Location = new Point(10, postPanel.Height * count);
-                postPanel.Width = 850;
+                commentPanel.Controls.Add(userLabel);
+                commentPanel.Controls.Add(scoreLabel);
+                commentPanel.Controls.Add(timeLabel);
+                commentPanel.Controls.Add(contentLabel);
+
+                commentPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+                commentPanel.AutoSize = true;
+                commentPanel.Location = new Point(12, (commentPanel.Height * count) + 325);
+                commentPanel.Width = 740;
             }
         }
         //Simple method that checks to see if user input matches the password for the username they want to log in as
@@ -717,7 +862,19 @@ namespace Assignment4
         {
             InitializeComponent();
             CenterToScreen();
+
+            //Disbales minimize and maximize buttons
+            MinimizeBox = false;
+            MaximizeBox = false;
+
+            //Prevents resizing of window
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+
             panel2.BackColor = Color.FromArgb(219, 223, 232);
+
+            searchTextBox.Enter += new EventHandler(searchTextBox_Enter);
+            searchTextBox.Leave += new EventHandler(searchTextBox_Leave);
+            searchTextBox_SetText();
 
             SortedSet<User> users = new SortedSet<User>();
             SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
@@ -742,55 +899,304 @@ namespace Assignment4
                             where U.Id == p.AuthorID
                             select U;
 
-                Point previous = new Point();
-
                 foreach (Subreddit s in srLinq)
                 {
                     foreach (User u in uLinq)
                     {
-                        DisplayPost temp = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.Score, count);
+                        DisplayPost temp = new DisplayPost(s.Name,p.Title, u.Name, p.TimeStamp, p.PostContent, count);
                         displays.Add(temp);
                         count++;
                     }
                 }
             }
 
-            //MessageBox.Show(count.ToString());
             foreach (DisplayPost d in displays)
             {
-                d.PostPanel.Tag = d.redditLabel;
                 d.PostPanel.Click += new EventHandler(panel1_Click);
-
+                d.postPanel.AutoSize = true;
                 mainPanel.Controls.Add(d.postPanel);
+                d.PostPanel.Tag = d.titleLabel.Text;
             }
+
+            foreach(Subreddit s in subreddits)
+            {
+                comboBox.Items.Add(s.Name);
+            }
+
+            //Changes "all" to "Home"
+            comboBox.Items[0] = "Home";
+            comboBox.SelectedIndex = 0;
+            comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         }
+
+        //Event handler for when user clicks on a display post object
         private void panel1_Click(object sender, EventArgs e)
         {
             System.Windows.Forms.Panel p = sender as System.Windows.Forms.Panel;
-            string test = (p.Tag).ToString();
-            string test2 = test.Substring(test.IndexOf('/') + -1);
+            string title = (p.Tag).ToString();
+            title = title.Substring(title.IndexOf(':') + 1);
+
+            SortedSet<User> users = new SortedSet<User>();
+            SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
+            List<Post> posts = new List<Post>();
+            List<Comment> comments = new List<Comment>();
+            List<DisplayComment> displays = new List<DisplayComment>();
+
+            ReadInputFiles(users, subreddits, posts, comments);
 
             Form newForm = new Form();
+            newForm.Size = new Size(800, 500);
+            newForm.BackColor = Color.Black;
             newForm.StartPosition = FormStartPosition.CenterParent;
             newForm.MaximizeBox = false;
             newForm.MinimizeBox = false;
+            newForm.FormBorderStyle = FormBorderStyle.FixedSingle;
+            newForm.Text = "Information about post";
 
-            System.Windows.Forms.Label newLabel = new System.Windows.Forms.Label();
+            System.Windows.Forms.Label redditLabel = new System.Windows.Forms.Label();
+            System.Windows.Forms.Label titleLabel = new System.Windows.Forms.Label();
+            System.Windows.Forms.Label contentLabel = new System.Windows.Forms.Label();
+            System.Windows.Forms.Label timeLabel = new System.Windows.Forms.Label();
+            System.Windows.Forms.TextBox commentBox = new System.Windows.Forms.TextBox();
 
-            newLabel.Location = new Point(13, 13);
-            newLabel.Text = test2;
+            foreach (Post ps in posts.Where( x=> x.Title == title.Trim()))
+            {
 
-            newForm.Controls.Add(newLabel);
+                foreach(Subreddit s in subreddits.Where( xyz => xyz.Id == ps.SubHome))
+                {
+                    redditLabel = new System.Windows.Forms.Label();
+                    redditLabel.ForeColor = Color.White;
+                    redditLabel.Text = "r/" + s.Name;
+                    redditLabel.AutoSize = true;
+                    redditLabel.Font = new Font("Verdana", 8);
+                    redditLabel.Location = new Point(0, 10);
+                }
+                int x = redditLabel.PreferredWidth;
+                int y = redditLabel.PreferredHeight;
+
+                titleLabel.AutoSize = true;
+                titleLabel.Text = title;
+                titleLabel.ForeColor = Color.White;
+                titleLabel.MaximumSize = new Size(520, 0);
+                titleLabel.Font = new Font("Verdana", 14);
+                titleLabel.Location = new Point(x - 8, 4);
+
+                int x2 = titleLabel.PreferredWidth;
+                int y2 = titleLabel.PreferredHeight;
+
+                contentLabel.AutoSize = true;
+                contentLabel.Text = ps.PostContent;
+                contentLabel.ForeColor = Color.Gray;
+                contentLabel.MaximumSize = new Size(520, 0);
+                contentLabel.Font = new Font("Verdana", 10);
+                contentLabel.Location = new Point(15, y2 + 7);
+
+                foreach (User u in users.Where(xy => xy.Id == ps.AuthorID))
+                {
+                    userLabel = new System.Windows.Forms.Label();
+                    userLabel.ForeColor = Color.Gray;
+                    userLabel.Text = "| Posted by u/" + u.Name;
+                    userLabel.AutoSize = true;
+                    userLabel.Font = new Font("Verdana", 8);
+                    userLabel.Location = new Point(x2 + 40, 9);
+                }
+
+                int x3 = userLabel.PreferredWidth;
+
+                timeLabel = new System.Windows.Forms.Label();
+                timeLabel.ForeColor = Color.Gray;
+                timeLabel.AutoSize = true;
+                timeLabel.Font = new Font("Verdana", 8);
+                timeLabel.Location = new Point(x2 + x3 + 40, 9);
+
+                DateTime now = DateTime.Now;
+                DateTime time = ps.TimeStamp;
+                TimeSpan ts = now - time;
+
+                int days = ts.Days;
+                int hours = ts.Hours;
+                int minutes = ts.Minutes;
+
+                //If was posted within the year, continue
+                if (days < 365)
+                {
+                    //If the year and month are the same, continue
+                    if (time.Month == now.Month)
+                    {
+                        if (time.Day == now.Day)
+                        {
+
+                        }
+                        //Else, the year and month are the same, but date is different
+                        else
+                        {
+                            //More than 1 day ago
+                            if ((now.Day - time.Day) > 1)
+                            {
+                                timeLabel.Text = (now.Day - time.Day) + " days ago";
+                            }
+                            //Exactly 1 day ago
+                            if ((now.Day - time.Day) == 1)
+                            {
+                                timeLabel.Text = "a day ago";
+                            }
+                            //Less than a day ago
+                            else
+                            {
+                                //If there are less than 24 hours but greater than 1 hour between now and post time, print difference
+                                if (hours < 24 && hours >= 1)
+                                {
+                                    timeLabel.Text = hours + " hours ago";
+                                }
+                                //Else, less than an hour between the two times
+                                else
+                                {
+                                    timeLabel.Text = minutes + " hours ago";
+                                }
+                            }
+                        }
+                    }
+                    //Else, year is the same, but month is different, print difference
+                    else
+                    {
+                        //More than 1 month ago
+                        if ((now.Month - time.Month) > 1)
+                        {
+                            timeLabel.Text = (now.Month - time.Month) + " months ago";
+                        }
+                        //1 month ago
+                        else
+                        {
+                            timeLabel.Text = (now.Month - time.Month) + " month ago";
+                        }
+                    }
+                }
+                //Else post is greater than or equal to a year old, continue
+                else
+                {
+                    //If difference between years is greater than 1
+                    if ((now.Year - time.Year) > 1)
+                    {
+                        timeLabel.Text = (now.Year - time.Year) + "years ago";
+                    }
+                    //Else, difference is a year ago
+                    else
+                    {
+                        timeLabel.Text = "a year ago";
+                    }
+                }
+            }
+            commentBox = new System.Windows.Forms.TextBox();
+
+            commentBox.Enter += new EventHandler(commentBox_Enter);
+            commentBox.Leave += new EventHandler(commentBox_Leave);
+            commentBox_SetText();
+
+            commentBox.Multiline = true;
+            commentBox.Size = new Size(740, 200);
+            commentBox.Location = new Point(12, 100);
+            commentBox.SelectionStart = 0;
+
+            int count = 0;
+            var cLinq = from C in comments
+                        orderby C.Score descending
+                        select C;
+
+            foreach (Comment c in cLinq)
+            {
+                var pLinq = from P in posts
+                            where P.Id == c.ParentID
+                            select P;
+
+                var uLinq = from U in users
+                            where U.Id == c.AuthorID
+                            select U;
+
+                foreach (Post p1 in pLinq.Where(xyz => xyz.Title == title.Trim()))
+                {
+                    foreach (User u in uLinq)
+                    {
+                        DisplayComment temp = new DisplayComment(u.Name, c.Score, c.TimeStamp, c.Content, count);
+                        displays.Add(temp);
+                        count++;
+                    }
+                }
+            }
+
+            foreach (DisplayComment d in displays)
+            {
+                d.commentPanel.AutoSize = true;
+                newForm.Controls.Add(d.commentPanel);
+            }
+
+            newForm.Controls.Add(redditLabel);
+            newForm.Controls.Add(titleLabel);
+            newForm.Controls.Add(contentLabel);
+            newForm.Controls.Add(userLabel);
+            newForm.Controls.Add(timeLabel);
+            newForm.Controls.Add(commentBox);
+
+            newForm.ActiveControl = redditLabel;
+            newForm.AutoScroll = true;
 
             newForm.ShowDialog();
+
+            //Function and event handlers for the comment box
+            void commentBox_SetText()
+            {
+                if(logged)
+                {
+                    commentBox.Text = "What are your thoughts?";
+                    commentBox.ForeColor = Color.Gray;
+                    return;
+                }
+                if(!logged)
+                {
+                    commentBox.Text = "Please log in to comment.";
+                    commentBox.ForeColor = Color.Gray;
+                    commentBox.Enabled = false;
+                    return;
+                }
+                    
+            }
+            void commentBox_Enter(object sender2, EventArgs e2)
+            {
+                if (commentBox.ForeColor == Color.Black)
+                {
+                    return;
+                }
+                commentBox.Text = "";
+                commentBox.ForeColor = Color.Black;
+
+                commentBox.KeyDown += commentBox_KeyDown;
+
+                void commentBox_KeyDown(object sender3, KeyEventArgs e3)
+                {
+                    if (e3.KeyCode == Keys.Enter)
+                    {
+                        //Just to see if its working
+                        commentBox.Text = "you pressed enter";
+                    }
+                }
+            }
+            void commentBox_Leave(object sender4, EventArgs e4)
+            {
+                if (commentBox.Text.Trim() == "")
+                {
+                    commentBox_SetText();
+                }
+            }
         }
 
+        //Event handler for when user clicks the log in button
         private void logInButton_Click(object sender, EventArgs e)
         {
-            if (logInButton.Text == "Log Out")
+            if(logInButton.Text == "Log Out")
             {
                 logInButton.Text = "Log In";
                 userLabel.Text = " ";
+                karmaLabel.Text = " ";
+
                 return;
             }
             if (logInButton.Text == "Log In")
@@ -801,6 +1207,7 @@ namespace Assignment4
                 logForm.BackColor = Color.FromArgb(219, 223, 232);
                 logForm.MaximizeBox = false;
                 logForm.MinimizeBox = false;
+                logForm.FormBorderStyle = FormBorderStyle.FixedSingle;
                 logForm.Text = "Log-In";
 
                 System.Windows.Forms.Label Prompt = new System.Windows.Forms.Label();
@@ -864,7 +1271,7 @@ namespace Assignment4
                     List<Post> posts = new List<Post>();
                     List<Comment> comments = new List<Comment>();
 
-                    bool logged = false;
+                    logged = false;
 
                     ReadInputFiles(users, subreddits, posts, comments);
 
@@ -878,9 +1285,13 @@ namespace Assignment4
                             if (usernameInput.Text == u.Name && passwordCheck(u.PasswordHash, password))
                             {
                                 logged = true;
-                                userLabel.Text = "Welcome, " + u.Name + "!";
+                                userLabel.Text = u.Name;
                                 userLabel.Font = new Font("Verdana", 11);
+                                userLabel.AutoSize = true;
                                 userLabel.Width = 150;
+                                int x = headerLabel.PreferredWidth;
+                                int y = headerLabel.PreferredHeight;
+                                userLabel.Location = new Point(x + 600, y - 7);
                             }
                         }
 
@@ -897,11 +1308,205 @@ namespace Assignment4
                         {
                             logForm.Close();
                             logInButton.Text = "Log Out";
+
+                            int karma = 0; //Sum of post score and comment score for the user
+
+                            foreach(User u in users.Where(x => x.Name == userLabel.Text))
+                            {
+                                karma = u.PostScore + u.CommentScore;
+                                karmaLabel.Text = "Karma " + String.Format("{0:n0}", karma);
+                                karmaLabel.Font = new Font("Verdana", 8);
+                            }
                         }
                     }
                 }
             }
         }
+
+        //Event handler for when user changes value of combobox
+        private void comboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mainPanel.Controls.Clear();
+
+            SortedSet<User> users = new SortedSet<User>();
+            SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
+            List<Post> posts = new List<Post>();
+            List<Comment> comments = new List<Comment>();
+            List<DisplayPost> displays = new List<DisplayPost>();
+
+            ReadInputFiles(users, subreddits, posts, comments);
+
+            string temp = comboBox.SelectedItem.ToString();
+
+            int count = 0;
+            var pLinq = from P in posts
+                        orderby P.Score descending
+                        select P;
+
+            if (temp == "Home")
+            {
+                foreach (Post p in pLinq)
+                {
+                    var srLinq = from S in subreddits
+                                 where S.Id == p.SubHome
+                                 select S;
+
+                    var uLinq = from U in users
+                                where U.Id == p.AuthorID
+                                select U;
+
+                    foreach (Subreddit s in srLinq)
+                    {
+                        foreach (User u in uLinq)
+                        {
+                            DisplayPost temp2 = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.PostContent, count);
+                            displays.Add(temp2);
+                            count++;
+                        }
+                    }
+                }
+                foreach (DisplayPost d in displays)
+                {
+                    d.PostPanel.Tag = d.titleLabel;
+                    d.PostPanel.Click += new EventHandler(panel1_Click);
+                    d.postPanel.AutoSize = true;
+                    if(d.titleLabel.ToString().Length > 80)
+                    {
+                        d.postPanel.Height = 100;
+                    }
+                    mainPanel.Controls.Add(d.postPanel);
+                    mainPanel.AutoScroll = true;
+                }
+            }
+            else
+            {
+                foreach (Post p in pLinq)
+                {
+                    var srLinq = from S in subreddits
+                                 where S.Id == p.SubHome
+                                 where S.Name == temp
+                                 select S;
+
+                    var uLinq = from U in users
+                                where U.Id == p.AuthorID
+                                select U;
+
+                    foreach (Subreddit s in srLinq)
+                    {
+                        foreach (User u in uLinq)
+                        {
+                            DisplayPost temp2 = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.PostContent, count);
+                            displays.Add(temp2);
+                            count++;
+                        }
+                    }
+                }
+                foreach (DisplayPost d in displays)
+                {
+                    d.PostPanel.Tag = d.redditLabel;
+                    d.PostPanel.Click += new EventHandler(panel1_Click);
+
+                    mainPanel.Controls.Add(d.postPanel);
+                    mainPanel.AutoScroll = true;
+                }
+            }
+        }
+
+        //Function and event handlers for the search box
+        protected void searchTextBox_SetText()
+        {
+            this.searchTextBox.Text = "Search reddit";
+            searchTextBox.ForeColor = Color.Gray;
+        }
+        private void searchTextBox_Enter(object sender, EventArgs e)
+        {
+            if (searchTextBox.ForeColor == Color.Black)
+            {
+                return;
+            }
+            searchTextBox.Text = "";
+            searchTextBox.ForeColor = Color.Black;
+
+            searchTextBox.KeyDown += searchTextBox_KeyDown;
+
+            void searchTextBox_KeyDown(object sender2, KeyEventArgs e2)
+            {
+                if (e2.KeyCode == Keys.Enter)
+                {
+                    mainPanel.Controls.Clear();
+
+                    SortedSet<User> users = new SortedSet<User>();
+                    SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
+                    List<Post> posts = new List<Post>();
+                    List<Comment> comments = new List<Comment>();
+                    List<DisplayPost> displays = new List<DisplayPost>();
+
+                    ReadInputFiles(users, subreddits, posts, comments);
+
+                    string temp = searchTextBox.Text;
+                    temp = temp.ToLower();
+
+                    int count = 0;
+                    var pLinq = from P in posts
+                                orderby P.Score descending
+                                select P;
+
+                    foreach (Post p in pLinq)
+                    {
+                        var srLinq = from S in subreddits
+                                     where S.Id == p.SubHome
+                                     select S;
+
+                        var uLinq = from U in users
+                                    where U.Id == p.AuthorID
+                                    select U;
+
+                        foreach (Subreddit s in srLinq)
+                        {
+                            foreach (User u in uLinq)
+                            {
+                                if(p.PostContent.ToLower().Contains(temp) || p.Title.ToLower().Contains(temp))
+                                {
+                                    DisplayPost temp2 = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.PostContent, count);
+                                    displays.Add(temp2);
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    foreach (DisplayPost d in displays)
+                    {
+                        d.PostPanel.Tag = d.redditLabel;
+                        d.PostPanel.Click += new EventHandler(panel1_Click);
+
+                        mainPanel.Controls.Add(d.postPanel);
+                        mainPanel.AutoScroll = true;
+                    }
+
+                    //If no results come up from search, print error message
+                    string temp3 = displays.Count().ToString();
+                    if(temp3 == "0")
+                    {
+                        errorLabel.Text = "We're sorry, we found no results!";
+                        errorLabel.Font = new Font("Verdana", 12);
+                        errorLabel.ForeColor = Color.FromArgb(237, 67, 55);
+                        errorLabel.AutoSize = true;
+                        errorLabel.Location = new Point(325, 50);
+                    }
+                    //Else, reset message, if previously was triggered
+                    else
+                    {
+                        errorLabel.Text = "";
+                    }
+                }
+            }
+        }
+        private void searchTextBox_Leave(object sender, EventArgs e)
+        {
+            if (searchTextBox.Text.Trim() == "")
+            {
+                searchTextBox_SetText();
+            }
+        }
     }
 }
-
