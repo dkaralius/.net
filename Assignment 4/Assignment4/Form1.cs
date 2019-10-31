@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -407,7 +408,12 @@ namespace Assignment4
             public System.Windows.Forms.Label redditLabel;
             public System.Windows.Forms.Label userLabel;
             public System.Windows.Forms.Label timeLabel;
-            //public System.Windows.Forms.Label scoreLabel;
+            public System.Windows.Forms.Label titleLabel;
+
+            public System.Windows.Forms.ToolStrip scoreStrip;
+            public System.Windows.Forms.ToolStripLabel scoreLabel;
+            public System.Windows.Forms.ToolStripLabel upArrowLabel;
+            public ToolStripLabel downArrowLabel;
 
             public System.Windows.Forms.Panel PostPanel
             {
@@ -426,12 +432,42 @@ namespace Assignment4
                 get { return userLabel; }
                 set { userLabel = value; }
             }
+
             public System.Windows.Forms.Label TimeLabel
             {
                 get { return timeLabel; }
                 set { timeLabel = value; }
             }
 
+            public System.Windows.Forms.Label Titlelabel
+            {
+                get { return titleLabel; }
+                set { titleLabel = value; }
+            }
+
+            public System.Windows.Forms.ToolStrip ScoreStrip
+            {
+                get { return scoreStrip; }
+                set { scoreStrip = value; }
+            }
+
+            public System.Windows.Forms.ToolStripLabel ScoreLabel
+            {
+                get { return scoreLabel; }
+                set { scoreLabel = value; }
+            }
+
+            public System.Windows.Forms.ToolStripLabel UpArrowLabel
+            {
+                get { return upArrowLabel; }
+                set { upArrowLabel = value; }
+            }
+
+            public ToolStripLabel DownARrowLabel
+            {
+                get { return downArrowLabel; }
+                set { downArrowLabel = value; }
+            }
             public DisplayPost()
             {
                 postPanel = new System.Windows.Forms.Panel();
@@ -441,33 +477,84 @@ namespace Assignment4
                 userLabel = new System.Windows.Forms.Label();
 
                 timeLabel = new System.Windows.Forms.Label();
+
+                titleLabel = new System.Windows.Forms.Label();
+
+                scoreStrip = new System.Windows.Forms.ToolStrip();
+
+                scoreLabel = new System.Windows.Forms.ToolStripLabel();
+
+                upArrowLabel = new ToolStripLabel();
+
+                downArrowLabel = new ToolStripLabel();
             }
 
-            public DisplayPost(string reddit, string title, string author, DateTime time, int count)
+            public DisplayPost(string reddit, string title, string author, DateTime time, int score, int count)
             {
                 postPanel = new System.Windows.Forms.Panel();
+
+                scoreStrip = new ToolStrip();
+                scoreStrip.BackColor = Color.FromArgb(22, 22, 22);
+                scoreStrip.Dock = DockStyle.Left;
+                
+                /// scoreStrip.
+
+                scoreLabel = new System.Windows.Forms.ToolStripLabel();
+                scoreLabel.ForeColor = Color.White;
+                scoreLabel.AutoSize = true;
+                scoreLabel.Font = new Font("Verdana", 8);
+                if (score < 1000 && score > -1000)
+                {
+                    scoreLabel.Text = score.ToString();
+                }
+                else
+                {
+                    scoreLabel.Text = String.Format("{0: 0.#k}", Convert.ToDecimal(score) / 1000);
+                }
+                
+
+                upArrowLabel = new ToolStripLabel();
+                System.Drawing.Image upArrow = System.Drawing.Image.FromFile("upArrow.png");
+                upArrowLabel.Text = String.Empty;
+                upArrowLabel.Image = upArrow;
+
+                downArrowLabel = new ToolStripLabel();
+                System.Drawing.Image downArrow = System.Drawing.Image.FromFile("downArrow.png");
+                downArrowLabel.Text = String.Empty;
+                downArrowLabel.Image = downArrow;
+                
+                scoreStrip.Items.Add(upArrowLabel);
+                scoreStrip.Items.Add(scoreLabel);
+                scoreStrip.Items.Add(downArrowLabel);
 
                 redditLabel = new System.Windows.Forms.Label();
                 redditLabel.ForeColor = Color.White;
                 redditLabel.Text = "r/" + reddit;
                 redditLabel.AutoSize = true;
                 redditLabel.Font = new Font("Verdana", 12);
-                redditLabel.Location = new Point(0, 4);
-                int x = RedditLabel.PreferredWidth;
+                redditLabel.Location = new Point(scoreStrip.Bottom + 20, 4);
+                int x = RedditLabel.PreferredSize.Width + scoreStrip.Bottom;
 
                 userLabel = new System.Windows.Forms.Label();
                 userLabel.ForeColor = Color.Gray;
                 userLabel.Text = "| Posted by u/" + author;
                 userLabel.AutoSize = true;
                 userLabel.Font = new Font("Verdana", 8);
-                userLabel.Location = new Point(x + 2, 7);
+                userLabel.Location = new Point(x + 10, 7);
                 int x2 = userLabel.PreferredWidth;
+
+                titleLabel = new System.Windows.Forms.Label();
+                titleLabel.ForeColor = Color.White;
+                titleLabel.Text = title;
+                titleLabel.AutoSize = true;
+                titleLabel.Font = new Font("Verdana", 12);
+                titleLabel.Location = new Point(x, redditLabel.Height + 5);
 
                 timeLabel = new System.Windows.Forms.Label();
                 timeLabel.ForeColor = Color.Gray;
                 timeLabel.AutoSize = true;
                 timeLabel.Font = new Font("Verdana", 8);
-                timeLabel.Location = new Point(x + x2 + 5 , 7);
+                timeLabel.Location = new Point(x + x2 + 11, 7);
 
                 DateTime now = DateTime.Now;
                 TimeSpan ts = now - time;
@@ -477,12 +564,12 @@ namespace Assignment4
                 int minutes = ts.Minutes;
 
                 //If was posted within the year, continue
-                if(days < 365)
+                if (days < 365)
                 {
                     //If the year and month are the same, continue
-                    if(time.Month == now.Month)
+                    if (time.Month == now.Month)
                     {
-                        if(time.Day == now.Day)
+                        if (time.Day == now.Day)
                         {
 
                         }
@@ -490,12 +577,12 @@ namespace Assignment4
                         else
                         {
                             //More than 1 day ago
-                            if((now.Day - time.Day) > 1)
+                            if ((now.Day - time.Day) > 1)
                             {
                                 timeLabel.Text = (now.Day - time.Day) + " days ago";
                             }
                             //Exactly 1 day ago
-                            if((now.Day - time.Day) == 1)
+                            if ((now.Day - time.Day) == 1)
                             {
                                 timeLabel.Text = "a day ago";
                             }
@@ -503,7 +590,7 @@ namespace Assignment4
                             else
                             {
                                 //If there are less than 24 hours but greater than 1 hour between now and post time, print difference
-                                if(hours < 24 && hours >= 1)
+                                if (hours < 24 && hours >= 1)
                                 {
                                     timeLabel.Text = hours + " hours ago";
                                 }
@@ -519,7 +606,7 @@ namespace Assignment4
                     else
                     {
                         //More than 1 month ago
-                        if((now.Month - time.Month) > 1)
+                        if ((now.Month - time.Month) > 1)
                         {
                             timeLabel.Text = (now.Month - time.Month) + " months ago";
                         }
@@ -534,7 +621,7 @@ namespace Assignment4
                 else
                 {
                     //If difference between years is greater than 1
-                    if((now.Year - time.Year) > 1)
+                    if ((now.Year - time.Year) > 1)
                     {
                         timeLabel.Text = (now.Year - time.Year) + "years ago";
                     }
@@ -548,6 +635,8 @@ namespace Assignment4
                 postPanel.Controls.Add(redditLabel);
                 postPanel.Controls.Add(userLabel);
                 postPanel.Controls.Add(timeLabel);
+                postPanel.Controls.Add(titleLabel);
+                postPanel.Controls.Add(scoreStrip);
 
                 postPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
                 postPanel.AutoSize = true;
@@ -659,7 +748,7 @@ namespace Assignment4
                 {
                     foreach (User u in uLinq)
                     {
-                        DisplayPost temp = new DisplayPost(s.Name,p.Title, u.Name, p.TimeStamp, count);
+                        DisplayPost temp = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.Score, count);
                         displays.Add(temp);
                         count++;
                     }
@@ -698,7 +787,7 @@ namespace Assignment4
 
         private void logInButton_Click(object sender, EventArgs e)
         {
-            if(logInButton.Text == "Log Out")
+            if (logInButton.Text == "Log Out")
             {
                 logInButton.Text = "Log In";
                 userLabel.Text = " ";
@@ -815,3 +904,4 @@ namespace Assignment4
         }
     }
 }
+

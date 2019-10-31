@@ -41,8 +41,8 @@
             this.panel1.AutoScroll = true;
             this.panel1.AutoSize = true;
             this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panel1.Location = new System.Drawing.Point(2, 27);
-            this.panel1.Margin = new System.Windows.Forms.Padding(2);
+            this.panel1.Location = new System.Drawing.Point(3, 33);
+            this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(0, 0);
             this.panel1.TabIndex = 0;
@@ -51,35 +51,39 @@
             // 
             this.mainPanel.AutoScroll = true;
             this.mainPanel.AutoSize = true;
-            this.mainPanel.Location = new System.Drawing.Point(11, 69);
-            this.mainPanel.Margin = new System.Windows.Forms.Padding(2);
+            this.mainPanel.Location = new System.Drawing.Point(15, 85);
+            this.mainPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(614, 421);
+            this.mainPanel.Size = new System.Drawing.Size(819, 518);
             this.mainPanel.TabIndex = 3;
             // 
             // panel2
             // 
+            this.panel2.AutoSize = true;
             this.panel2.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.panel2.Controls.Add(this.userLabel);
             this.panel2.Controls.Add(this.logInButton);
-            this.panel2.Location = new System.Drawing.Point(-6, -7);
+            this.panel2.Location = new System.Drawing.Point(-8, -9);
+            this.panel2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(903, 34);
+            this.panel2.Size = new System.Drawing.Size(1204, 42);
             this.panel2.TabIndex = 4;
             // 
             // userLabel
             // 
             this.userLabel.AutoSize = true;
-            this.userLabel.Location = new System.Drawing.Point(5, 13);
+            this.userLabel.Location = new System.Drawing.Point(7, 16);
+            this.userLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.userLabel.Name = "userLabel";
-            this.userLabel.Size = new System.Drawing.Size(0, 13);
+            this.userLabel.Size = new System.Drawing.Size(0, 17);
             this.userLabel.TabIndex = 1;
             // 
             // logInButton
             // 
-            this.logInButton.Location = new System.Drawing.Point(825, 8);
+            this.logInButton.Location = new System.Drawing.Point(1100, 10);
+            this.logInButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.logInButton.Name = "logInButton";
-            this.logInButton.Size = new System.Drawing.Size(75, 23);
+            this.logInButton.Size = new System.Drawing.Size(100, 28);
             this.logInButton.TabIndex = 0;
             this.logInButton.Text = "Log In";
             this.logInButton.UseVisualStyleBackColor = true;
@@ -87,15 +91,15 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ClientSize = new System.Drawing.Size(895, 501);
+            this.ClientSize = new System.Drawing.Size(1193, 617);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.panel1);
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Form1";
             this.Text = "Reddit";
             this.panel2.ResumeLayout(false);
@@ -114,4 +118,3 @@
         private System.Windows.Forms.Label userLabel;
     }
 }
-
