@@ -1,4 +1,23 @@
-﻿using System;
+﻿/********************************************************
+ *  PROGRAM : Assignment4                               *
+ *                                                      *
+ *  PROGRAMMERS : Josue Ballona and Dominykas Karalius  *
+ *  ZID : Z1832823 and Z1809478                         *
+ *                                                      *
+ *  DATE : 10/31/2019 Thursday, October 31st 2019       *
+ *                                                      *
+ *                                                      *
+ * This program mimics the popular application "Reddit",*
+ * but this time we have a GUI. The program reads       *
+ * provided .txt input files and stores that            *
+ * information into SortedSet<> objects. Information    *
+ * such as users, subreddits, posts, and comments.      *
+ * The user of the program can choose from a variety    *
+ * of actions to perfrom; view posts and their comments,*
+ * creat a new post/comment, log-in, upvote and         *
+ * downvote, search by keyword and sort by subreddit.   *
+ *******************************************************/
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -780,8 +799,6 @@ namespace Assignment4
                 scoreStrip.Items.Add(scoreLabel);
                 scoreStrip.Items.Add(downArrow);
 
-
-
                 postPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
                 postPanel.Width = 850;
                 postPanel.Height = 150;
@@ -866,10 +883,7 @@ namespace Assignment4
                     upVoted = true;
                     downVoted = false;
                 }
-                //}
-
             }
-
             private void downArrow_Click(object sender, EventArgs e)
             {
                 ToolStripButton s = (ToolStripButton)sender;
@@ -891,14 +905,9 @@ namespace Assignment4
                         {
                             scoreLabel.Text = String.Format("{0: 0.#k}", Convert.ToDecimal(score) / 1000);
                         }
-
-
-
-
                     }
                     else
                     {
-
                         score -= 1;
 
                         if (score < 1000 && score > -1000)
