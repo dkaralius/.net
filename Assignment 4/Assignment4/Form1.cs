@@ -412,8 +412,39 @@ namespace Assignment4
             public System.Windows.Forms.Label timeLabel;
             public System.Windows.Forms.Label titleLabel;
             public System.Windows.Forms.Label commentLabel;
+            public ToolStrip scoreStrip;
+            public ToolStripButton upArrow;
+            public ToolStripLabel scoreLabel;
+            public ToolStripButton downArrow;
+
+            bool logged;
+            bool upVoted;
+            bool downVoted;
+            decimal score;
 
             string subredditName;
+
+            public bool UpVoted
+            {
+                get { return upVoted; }
+                set { upVoted = value; }
+            }
+            public bool DownVoted
+            {
+                get { return downVoted; }
+                set
+                { downVoted = value; }
+            }
+            public decimal Score
+            {
+                get { return score; }
+                set { score = value; }
+            }
+            public bool Logged
+            {
+                get { return logged; }
+                set { logged = value; }
+            }
 
             public System.Windows.Forms.Panel PostPanel
             {
@@ -458,7 +489,29 @@ namespace Assignment4
                 get { return SubredditName; }
                 set { SubredditName = value; }
             }
+            public ToolStrip ScoreStrip
+            {
+                get { return scoreStrip; }
+                set { scoreStrip = value; }
+            }
 
+            public ToolStripButton UpArrow
+            {
+                get { return upArrow; }
+                set { upArrow = value; }
+            }
+
+            public ToolStripLabel ScoreLabel
+            {
+                get { return scoreLabel; }
+                set { scoreLabel = value; }
+            }
+
+            public ToolStripButton DownArrow
+            {
+                get { return downArrow; }
+                set { downArrow = value; }
+            }
             public DisplayPost()
             {
                 postPanel = new System.Windows.Forms.Panel();
@@ -475,20 +528,75 @@ namespace Assignment4
 
                 commentLabel = new System.Windows.Forms.Label();
 
+                scoreStrip = new ToolStrip();
+
+                upArrow = new ToolStripButton();
+
+                scoreLabel = new ToolStripLabel();
+
+                downArrow = new ToolStripButton();
+
+                score = 1;
+
+                logged = false;
+
+                upVoted = downVoted = false;
+
                 string subredditName = null;
             }
 
-            public DisplayPost(string reddit, string title, string author, DateTime time, string content, int count, int commentNum)
+            public DisplayPost(string reddit, string title, string author, DateTime time, string content, int score, int count, int commentNum, bool logged)
             {
                 postPanel = new System.Windows.Forms.Panel();
                 subredditName = reddit;
+                upVoted = false;
+                downVoted = false;
+
+                this.score = score;
+                this.logged = logged;
+
+                scoreStrip = new ToolStrip();
+                scoreStrip.Dock = DockStyle.Left;
+                scoreStrip.BackColor = Color.FromArgb(22, 22, 22);
+                scoreStrip.AutoSize = true;
+
+                System.Drawing.Image upArrowPic;
+                upArrow = new ToolStripButton();
+                upArrowPic = System.Drawing.Image.FromFile("upArrow.png");
+                upArrow.Text = String.Empty;
+                upArrow.Image = upArrowPic;
+                upArrow.MouseEnter += new EventHandler(upArrow_MouseEnter);
+                upArrow.MouseLeave += new EventHandler(upArrow_MouseLeave);
+                upArrow.Click += new EventHandler(upArrow_Click);
+
+
+                scoreLabel = new System.Windows.Forms.ToolStripLabel();
+                scoreLabel.ForeColor = Color.White;
+                scoreLabel.AutoSize = true;
+                scoreLabel.Font = new Font("Verdana", 8);
+                if (score < 1000 && score > -1000)
+                {
+                    scoreLabel.Text = score.ToString();
+                }
+                else
+                {
+                    scoreLabel.Text = String.Format("{0: 0.#k}", Convert.ToDecimal(score) / 1000);
+                }
+
+                downArrow = new ToolStripButton();
+                System.Drawing.Image downArrowPic = System.Drawing.Image.FromFile("downArrow.png");
+                downArrow.Text = String.Empty;
+                downArrow.Image = downArrowPic;
+                downArrow.MouseEnter += new EventHandler(downArrow_MouseEnter);
+                downArrow.MouseLeave += new EventHandler(downArrow_MouseLeave);
+                downArrow.Click += new EventHandler(downArrow_Click);
 
                 redditLabel = new System.Windows.Forms.Label();
                 redditLabel.ForeColor = Color.White;
                 redditLabel.Text = "r/" + reddit;
                 redditLabel.AutoSize = true;
                 redditLabel.Font = new Font("Verdana", 12);
-                redditLabel.Location = new Point(0, 4);
+                redditLabel.Location = new Point(scoreStrip.Bottom + 20, 4);
                 int x = RedditLabel.PreferredWidth;
                 int y = redditLabel.PreferredHeight;
 
@@ -498,7 +606,7 @@ namespace Assignment4
                 titleLabel.MaximumSize = new Size(800, 0);
                 titleLabel.Font = new Font("Verdana", 12);
                 titleLabel.Text = title;
-                titleLabel.Location = new Point(0, y + 10);
+                titleLabel.Location = new Point(scoreStrip.Bottom + 40, y + 10);
                 int x2 = titleLabel.PreferredWidth;
 
                 contentLabel = new System.Windows.Forms.Label();
@@ -508,17 +616,17 @@ namespace Assignment4
                 contentLabel.MaximumSize = new Size(800, 0);
                 contentLabel.Font = new Font("Verdana", 12);
 
-                if(content.Length < 100 && title.Length < 100)
+                if (content.Length < 100 && title.Length < 100)
                 {
-                    contentLabel.Location = new Point(15, y + 40);
+                    contentLabel.Location = new Point(scoreStrip.Bottom + 40, y + 40);
                 }
-                if(content.Length < 100 && title.Length > 100)
+                if (content.Length < 100 && title.Length > 100)
                 {
-                    contentLabel.Location = new Point(15, y + 50);
+                    contentLabel.Location = new Point(scoreStrip.Bottom + 40, y + 50);
                 }
                 if (content.Length > 200)
                 {
-                    contentLabel.Location = new Point(15, y + 30);
+                    contentLabel.Location = new Point(scoreStrip.Bottom + 40, y + 30);
                 }
 
                 userLabel = new System.Windows.Forms.Label();
@@ -526,14 +634,15 @@ namespace Assignment4
                 userLabel.Text = "| Posted by u/" + author;
                 userLabel.AutoSize = true;
                 userLabel.Font = new Font("Verdana", 8);
-                userLabel.Location = new Point(x + 2, 7);
+                userLabel.Location = new Point(x + scoreStrip.Bottom + 10, 7);
                 int x3 = userLabel.PreferredWidth;
 
                 timeLabel = new System.Windows.Forms.Label();
                 timeLabel.ForeColor = Color.Gray;
                 timeLabel.AutoSize = true;
                 timeLabel.Font = new Font("Verdana", 8);
-                timeLabel.Location = new Point(x + x3 + 5 , 7);
+                timeLabel.Location = new Point(scoreStrip.Bottom + x + 10, 7);
+
 
                 DateTime now = DateTime.Now;
                 TimeSpan ts = now - time;
@@ -543,12 +652,12 @@ namespace Assignment4
                 int minutes = ts.Minutes;
 
                 //If was posted within the year, continue
-                if(days < 365)
+                if (days < 365)
                 {
                     //If the year and month are the same, continue
-                    if(time.Month == now.Month)
+                    if (time.Month == now.Month)
                     {
-                        if(time.Day == now.Day)
+                        if (time.Day == now.Day)
                         {
 
                         }
@@ -556,12 +665,12 @@ namespace Assignment4
                         else
                         {
                             //More than 1 day ago
-                            if((now.Day - time.Day) > 1)
+                            if ((now.Day - time.Day) > 1)
                             {
                                 timeLabel.Text = (now.Day - time.Day) + " days ago";
                             }
                             //Exactly 1 day ago
-                            if((now.Day - time.Day) == 1)
+                            if ((now.Day - time.Day) == 1)
                             {
                                 timeLabel.Text = "a day ago";
                             }
@@ -569,7 +678,7 @@ namespace Assignment4
                             else
                             {
                                 //If there are less than 24 hours but greater than 1 hour between now and post time, print difference
-                                if(hours < 24 && hours >= 1)
+                                if (hours < 24 && hours >= 1)
                                 {
                                     timeLabel.Text = hours + " hours ago";
                                 }
@@ -585,7 +694,7 @@ namespace Assignment4
                     else
                     {
                         //More than 1 month ago
-                        if((now.Month - time.Month) > 1)
+                        if ((now.Month - time.Month) > 1)
                         {
                             timeLabel.Text = (now.Month - time.Month) + " months ago";
                         }
@@ -600,7 +709,7 @@ namespace Assignment4
                 else
                 {
                     //If difference between years is greater than 1
-                    if((now.Year - time.Year) > 1)
+                    if ((now.Year - time.Year) > 1)
                     {
                         timeLabel.Text = (now.Year - time.Year) + "years ago";
                     }
@@ -613,33 +722,33 @@ namespace Assignment4
 
                 if (count > 0)
                 {
-                    redditLabel.Location = new Point(0, 28);
+                    redditLabel.Location = new Point(scoreStrip.Bottom + 15, 28);
                     int x4 = RedditLabel.PreferredWidth;
                     int y4 = redditLabel.PreferredHeight;
 
-                    titleLabel.Location = new Point(0, y + 36);
+                    titleLabel.Location = new Point(redditLabel.Location.X, y + 36);
 
                     if (content.Length < 100 && title.Length < 100)
                     {
-                        contentLabel.Location = new Point(15, y + 65);
+                        contentLabel.Location = new Point(redditLabel.Location.X, y + 65);
                     }
                     if (content.Length < 100 && title.Length > 100)
                     {
-                        contentLabel.Location = new Point(15, y + 88);
+                        contentLabel.Location = new Point(redditLabel.Location.X, y + 88);
                     }
                     if (content.Length > 200)
                     {
-                        contentLabel.Location = new Point(15, y + 68);
+                        contentLabel.Location = new Point(redditLabel.Location.X, y + 68);
                     }
-                    userLabel.Location = new Point(x + 2, 31);
+                    userLabel.Location = new Point(x +scoreStrip.Bottom + 2, 31);
                     int x5 = userLabel.PreferredWidth;
-                    timeLabel.Location = new Point(x + x5 + 5, 31);
+                    timeLabel.Location = new Point(scoreStrip.Bottom + x + x5 + 5, 31);
                 }
 
                 System.Windows.Forms.PictureBox commentIcon = new System.Windows.Forms.PictureBox();
                 commentIcon.Image = System.Drawing.Image.FromFile("..\\..\\comment_icon.png");
                 commentIcon.SizeMode = PictureBoxSizeMode.AutoSize;
-                commentIcon.Location = new Point(0, 150);
+                commentIcon.Location = new Point(scoreStrip.Bottom + 20, 150);
 
                 commentLabel = new System.Windows.Forms.Label();
                 commentLabel.ForeColor = Color.Gray;
@@ -649,13 +758,13 @@ namespace Assignment4
                 {
                     commentLabel.Text = commentNum + " comments";
                     commentLabel.Font = new Font("Verdana", 8);
-                    commentLabel.Location = new Point(22, 154);
+                    commentLabel.Location = new Point(scoreStrip.Bottom + 40, 154);
                 }
                 else
                 {
                     commentLabel.Text = commentNum + " comment";
                     commentLabel.Font = new Font("Verdana", 8);
-                    commentLabel.Location = new Point(22, 154);
+                    commentLabel.Location = new Point(scoreStrip.Bottom + 40, 154);
                 }
 
                 postPanel.Controls.Add(redditLabel);
@@ -665,6 +774,11 @@ namespace Assignment4
                 postPanel.Controls.Add(titleLabel);
                 postPanel.Controls.Add(commentIcon);
                 postPanel.Controls.Add(commentLabel);
+                postPanel.Controls.Add(scoreStrip);
+
+                scoreStrip.Items.Add(upArrow);
+                scoreStrip.Items.Add(scoreLabel);
+                scoreStrip.Items.Add(downArrow);
 
 
 
@@ -672,10 +786,141 @@ namespace Assignment4
                 postPanel.Width = 850;
                 postPanel.Height = 150;
 
-                postPanel.Location = new Point(10, postPanel.Height * count);
+                postPanel.Location = new Point(10, (postPanel.Height + 20) * count );
+            }
+            private void upArrow_MouseEnter(Object sender, EventArgs e)
+            {
+                ToolStripButton s = (ToolStripButton)sender;
+
+                System.Drawing.Image upArrowPic = System.Drawing.Image.FromFile("upArrowRed.png");
+                upArrow.Image = upArrowPic;
+
+            }
+
+            private void upArrow_MouseLeave(Object sender, EventArgs e)
+            {
+
+                System.Drawing.Image upArrowPic = System.Drawing.Image.FromFile("upArrow.png");
+                upArrow.Image = upArrowPic;
+            }
+
+            private void downArrow_MouseEnter(Object sender, EventArgs e)
+            {
+                ToolStripButton s = (ToolStripButton)sender;
+
+                System.Drawing.Image downArrowPic = System.Drawing.Image.FromFile("downArrowBlue.png");
+                downArrow.Image = downArrowPic;
+            }
+
+            private void downArrow_MouseLeave(Object sender, EventArgs e)
+            {
+                System.Drawing.Image downArrowPic = System.Drawing.Image.FromFile("downArrow.png");
+                downArrow.Image = downArrowPic;
+            }
+
+            private void upArrow_Click(object sender, EventArgs e)
+            {
+                ToolStripButton s = (ToolStripButton)sender;
+
+                if (upVoted)
+                    return;
+                else
+                {
+                    if (scoreLabel.Text[scoreLabel.Text.Length - 1] == 'k')
+                    {
+                        score += 1;
+
+                        if (score < 1000 && score > -1000)
+                        {
+                            scoreLabel.Text = score.ToString();
+                        }
+                        else
+                        {
+                            scoreLabel.Text = String.Format("{0: 0.#k}", Convert.ToDecimal(score) / 1000);
+                        }
+
+                        System.Drawing.Image upArrowPic = System.Drawing.Image.FromFile("upArrowRed.png");
+                        upArrow.Image = System.Drawing.Image.FromFile("upArrowRed.png");
+
+
+                    }
+                    else
+                    {
+
+                        score += 1;
+
+                        if (score < 1000 && score > -1000)
+                        {
+                            scoreLabel.Text = score.ToString();
+                        }
+                        else
+                        {
+                            scoreLabel.Text = String.Format("{0: 0.#k}", Convert.ToDecimal(score) / 1000);
+                        }
+                        System.Drawing.Image upArrowPic = System.Drawing.Image.FromFile("upArrow.png");
+                        s.Image = upArrowPic;
+                    }
+
+                    upArrow.Enabled = false;
+                    downArrow.Enabled = true;
+                    upVoted = true;
+                    downVoted = false;
+                }
+                //}
+
+            }
+
+            private void downArrow_Click(object sender, EventArgs e)
+            {
+                ToolStripButton s = (ToolStripButton)sender;
+
+
+                if (downVoted)
+                    return;
+                else
+                { 
+                    if (scoreLabel.Text[scoreLabel.Text.Length - 1] == 'k')
+                    {
+                        score -= 1;
+
+                        if (score < 1000 && score > -1000)
+                        {
+                            scoreLabel.Text = score.ToString();
+                        }
+                        else
+                        {
+                            scoreLabel.Text = String.Format("{0: 0.#k}", Convert.ToDecimal(score) / 1000);
+                        }
+
+
+
+
+                    }
+                    else
+                    {
+
+                        score -= 1;
+
+                        if (score < 1000 && score > -1000)
+                        {
+                            scoreLabel.Text = score.ToString();
+                        }
+                        else
+                        {
+                            scoreLabel.Text = String.Format("{0: 0.#k}", Convert.ToDecimal(score) / 1000);
+                        }
+                    }
+
+                    downVoted = true;
+                    upVoted = false;
+                    downArrow.Enabled = false;
+
+                    upArrow.Enabled = true;
+                }
+
             }
         }
-        public class DisplayComment
+    public class DisplayComment
         {
             //Panel where all info about a comment will be stored
             public System.Windows.Forms.Panel commentPanel;
@@ -754,8 +999,8 @@ namespace Assignment4
                 scoreLabel.AutoSize = true;
                 scoreLabel.MaximumSize = new Size(800, 0);
                 scoreLabel.Font = new Font("Verdana", 8);
-                scoreLabel.Text = " | " + String.Format("{0:n0}",score + " points");
-                scoreLabel.Location = new Point(x - 4 , 7);
+                scoreLabel.Text = " | " + String.Format("{0:n0}", score + " points");
+                scoreLabel.Location = new Point(x - 4, 7);
 
                 int x2 = ScoreLabel.PreferredWidth;
                 int y2 = scoreLabel.PreferredHeight;
@@ -764,7 +1009,7 @@ namespace Assignment4
                 timeLabel.ForeColor = Color.Gray;
                 timeLabel.AutoSize = true;
                 timeLabel.Font = new Font("Verdana", 8);
-                timeLabel.Location = new Point(x + x2, 7 );
+                timeLabel.Location = new Point(x + x2, 7);
 
                 DateTime now = DateTime.Now;
                 TimeSpan ts = now - time;
@@ -781,7 +1026,7 @@ namespace Assignment4
                     {
                         if (time.Day == now.Day)
                         {
-                            if(time.Hour == now.Hour)
+                            if (time.Hour == now.Hour)
                             {
                                 if (time.Minute == now.Minute)
                                 {
@@ -885,7 +1130,7 @@ namespace Assignment4
 
                 void replyIcon_Click(object sender, EventArgs e)
                 {
-                    if(userName == null)
+                    if (userName == null)
                     {
                         MessageBox.Show("Please log in to comment.");
                         return;
@@ -920,9 +1165,9 @@ namespace Assignment4
                     //Function and event handlers for the comment box
                     void replyBox_SetText()
                     {
-                            replyBox.Text = "What are your thoughts?";
-                            replyBox.ForeColor = Color.Gray;
-                            return;
+                        replyBox.Text = "What are your thoughts?";
+                        replyBox.ForeColor = Color.Gray;
+                        return;
                     }
                     void replyBox_Enter(object sender2, EventArgs e2)
                     {
@@ -951,7 +1196,7 @@ namespace Assignment4
                     {
                         MessageBox.Show("Please enter a comment!");
                     }
-                    
+
                     DisplayReply temp = new DisplayReply(userName, 1, DateTime.Now, replyBox.Text, count);
                     replies.Insert(0, temp);
                     count++;
@@ -1269,7 +1514,7 @@ namespace Assignment4
 
             void createPost_Click(object sender, EventArgs e)
             {
-                if(!logged)
+                if (!logged)
                 {
                     MessageBox.Show("Please log in to create a post.");
                 }
@@ -1307,7 +1552,7 @@ namespace Assignment4
                     reddits.Font = new Font("Verdana", 10);
                     reddits.DropDownStyle = ComboBoxStyle.DropDownList;
                     reddits.Location = new Point(190, 6);
-                    foreach(Subreddit s in subreddits)
+                    foreach (Subreddit s in subreddits)
                     {
                         reddits.Items.Add(s.Name);
                     }
@@ -1398,13 +1643,13 @@ namespace Assignment4
                     }
                     void submitPost_Click(object sender4, EventArgs e4)
                     {
-                        if(title.Text == "")
+                        if (title.Text == "")
                         {
                             MessageBox.Show("Title is empty!");
                         }
                         DateTime time = DateTime.Now;
 
-                        DisplayPost temp = new DisplayPost(reddits.SelectedItem.ToString() ,title.Text,loggedUser,time,content.Text,count,0);
+                        DisplayPost temp = new DisplayPost(reddits.SelectedItem.ToString(), title.Text, loggedUser, time, content.Text, 1, count, 0, logged);
                         displays.Insert(0, temp);
                         count++;
 
@@ -1413,7 +1658,7 @@ namespace Assignment4
                             d.postPanel.AutoSize = true;
                             newForm.Controls.Add(d.postPanel);
                         }
-                        
+
                         using (StreamWriter w = File.AppendText(@"..\\..\\posts.txt"))
                         {
                             int min = 0000;
@@ -1426,12 +1671,12 @@ namespace Assignment4
                                 foreach (User u in users.Where(x => x.Name == loggedUser))
                                 {
                                     w.WriteLine();
-                                    w.WriteLine(0 + "\t" + id + "\t" + u.Id + "\t" + title.Text + "\t" + content.Text + "\t" + s.Id + "\t" + 1 + "\t" + 0 + "\t" + 0 + "\t" + 
+                                    w.WriteLine(0 + "\t" + id + "\t" + u.Id + "\t" + title.Text + "\t" + content.Text + "\t" + s.Id + "\t" + 1 + "\t" + 0 + "\t" + 0 + "\t" +
                                         time.Year + "\t" + time.Month + "\t" + time.Day + "\t" + time.Hour + "\t" + time.Minute + "\t" + time.Second + "\t" + 0 + "\t" + 0 + "\t" + 0);
                                 }
                             }
                         }
-                        
+
                         newForm.Close();
                     }
                     //Closes the post making window
@@ -1465,11 +1710,11 @@ namespace Assignment4
                 {
                     foreach (User u in uLinq)
                     {
-                        foreach(Comment c in cLinq)
+                        foreach (Comment c in cLinq)
                         {
                             i++;
                         }
-                        DisplayPost temp = new DisplayPost(s.Name,p.Title, u.Name, p.TimeStamp, p.PostContent, count, i);
+                        DisplayPost temp = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.PostContent, p.Score, count, i, logged);
                         displays.Add(temp);
                         count++;
                     }
@@ -1483,7 +1728,7 @@ namespace Assignment4
                 d.PostPanel.Tag = d.titleLabel.Text;
             }
 
-            foreach(Subreddit s in subreddits)
+            foreach (Subreddit s in subreddits)
             {
                 comboBox.Items.Add(s.Name);
             }
@@ -1526,11 +1771,11 @@ namespace Assignment4
             System.Windows.Forms.Label commentLabel = new System.Windows.Forms.Label();
             System.Windows.Forms.Button submitComment = new System.Windows.Forms.Button();
 
-            
-            foreach (Post ps in posts.Where( x=> x.Title == title.Trim()))
+
+            foreach (Post ps in posts.Where(x => x.Title == title.Trim()))
             {
 
-                foreach(Subreddit s in subreddits.Where( xyz => xyz.Id == ps.SubHome))
+                foreach (Subreddit s in subreddits.Where(xyz => xyz.Id == ps.SubHome))
                 {
                     redditLabel = new System.Windows.Forms.Label();
                     redditLabel.ForeColor = Color.White;
@@ -1673,11 +1918,11 @@ namespace Assignment4
             submitComment.Font = new Font("Verdana", 8);
             submitComment.Click += new EventHandler(submitComment_Click);
 
-            if(!logged)
+            if (!logged)
             {
                 submitComment.Enabled = false;
             }
-            if(logged)
+            if (logged)
             {
                 submitComment.Enabled = true;
             }
@@ -1713,7 +1958,7 @@ namespace Assignment4
             {
                 d.commentPanel.AutoSize = true;
                 newForm.Controls.Add(d.commentPanel);
-                i ++;
+                i++;
             }
 
             commentLabel = new System.Windows.Forms.Label();
@@ -1756,20 +2001,20 @@ namespace Assignment4
             //Function and event handlers for the comment box
             void commentBox_SetText()
             {
-                if(logged)
+                if (logged)
                 {
                     commentBox.Text = "What are your thoughts?";
                     commentBox.ForeColor = Color.Gray;
                     return;
                 }
-                if(!logged)
+                if (!logged)
                 {
                     commentBox.Text = "Please log in to comment.";
                     commentBox.ForeColor = Color.Gray;
                     commentBox.Enabled = false;
                     return;
                 }
-                    
+
             }
             void commentBox_Enter(object sender2, EventArgs e2)
             {
@@ -1790,14 +2035,14 @@ namespace Assignment4
             void submitComment_Click(object sender4, EventArgs e4)
             {
                 //If text box is empty
-                if(commentBox.Text == "What are your thoughts?")
+                if (commentBox.Text == "What are your thoughts?")
                 {
                     MessageBox.Show("Please enter a comment!"); //Just to show it works
                 }
                 DateTime time = DateTime.Now;
 
                 DisplayComment temp = new DisplayComment(loggedUser, 1, time, commentBox.Text, count, loggedUser);
-                displays.Insert(0,temp);
+                displays.Insert(0, temp);
                 count++;
 
                 foreach (DisplayComment d in displays)
@@ -1831,7 +2076,7 @@ namespace Assignment4
         //Event handler for when user clicks the log in button
         private void logInButton_Click(object sender, EventArgs e)
         {
-            if(logInButton.Text == "Log Out")
+            if (logInButton.Text == "Log Out")
             {
                 logInButton.Text = "Log In";
                 userLabel.Text = null;
@@ -1929,6 +2174,7 @@ namespace Assignment4
                                 userLabel.Font = new Font("Verdana", 11);
                                 userLabel.AutoSize = true;
                                 userLabel.Width = 150;
+                                
                                 int x = headerLabel.PreferredWidth;
                                 int y = headerLabel.PreferredHeight;
                                 userLabel.Location = new Point(x + 600, y - 7);
@@ -1951,7 +2197,7 @@ namespace Assignment4
 
                             int karma = 0; //Sum of post score and comment score for the user
 
-                            foreach(User u in users.Where(x => x.Name == userLabel.Text))
+                            foreach (User u in users.Where(x => x.Name == userLabel.Text))
                             {
                                 karma = u.PostScore + u.CommentScore;
                                 karmaLabel.Text = "Karma " + String.Format("{0:n0}", karma);
@@ -2007,15 +2253,15 @@ namespace Assignment4
                     {
                         foreach (User u in uLinq)
                         {
-                            foreach(Comment c in cLinq)
+                            foreach (Comment c in cLinq)
                             {
                                 i++;
                             }
 
-                            DisplayPost temp2 = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.PostContent, count, i);
+                            DisplayPost temp2 = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.PostContent, p.Score, count, i, logged);
                             displays.Add(temp2);
                             count++;
-                            
+
                         }
                     }
                 }
@@ -2024,7 +2270,7 @@ namespace Assignment4
                     d.PostPanel.Tag = d.titleLabel;
                     d.PostPanel.Click += new EventHandler(panel1_Click);
                     d.postPanel.AutoSize = true;
-                    if(d.titleLabel.ToString().Length > 80)
+                    if (d.titleLabel.ToString().Length > 80)
                     {
                         d.postPanel.Height = 100;
                     }
@@ -2055,11 +2301,11 @@ namespace Assignment4
                     {
                         foreach (User u in uLinq)
                         {
-                            foreach(Comment c in cLinq)
+                            foreach (Comment c in cLinq)
                             {
                                 i++;
                             }
-                            DisplayPost temp2 = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.PostContent, count, i);
+                            DisplayPost temp2 = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.PostContent, p.Score, count, i, logged);
                             displays.Add(temp2);
                             count++;
                         }
@@ -2135,13 +2381,13 @@ namespace Assignment4
                         {
                             foreach (User u in uLinq)
                             {
-                                foreach(Comment c in cLinq)
+                                foreach (Comment c in cLinq)
                                 {
                                     i++;
                                 }
-                                if(p.PostContent.ToLower().Contains(temp) || p.Title.ToLower().Contains(temp))
+                                if (p.PostContent.ToLower().Contains(temp) || p.Title.ToLower().Contains(temp))
                                 {
-                                    DisplayPost temp2 = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.PostContent, count, i);
+                                    DisplayPost temp2 = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.PostContent, p.Score, count, i, logged);
                                     displays.Add(temp2);
                                     count++;
                                 }
@@ -2158,7 +2404,7 @@ namespace Assignment4
                     }
                     //If no results come up from search, print error message
                     string temp3 = displays.Count().ToString();
-                    if(temp3 == "0")
+                    if (temp3 == "0")
                     {
                         errorLabel.Text = "We're sorry, we found no results!";
                         errorLabel.Font = new Font("Verdana", 12);
