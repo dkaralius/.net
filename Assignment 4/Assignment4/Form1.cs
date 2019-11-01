@@ -19,6 +19,7 @@ namespace Assignment4
         string redditName;
         string loggedUser = null;
         bool logged;
+        bool temp = false;
 
 
         public class User : IComparable
@@ -498,6 +499,7 @@ namespace Assignment4
                 titleLabel.Font = new Font("Verdana", 12);
                 titleLabel.Text = title;
                 titleLabel.Location = new Point(0, y + 10);
+                int x2 = titleLabel.PreferredWidth;
 
                 contentLabel = new System.Windows.Forms.Label();
                 contentLabel.AutoSize = true;
@@ -525,13 +527,13 @@ namespace Assignment4
                 userLabel.AutoSize = true;
                 userLabel.Font = new Font("Verdana", 8);
                 userLabel.Location = new Point(x + 2, 7);
-                int x2 = userLabel.PreferredWidth;
+                int x3 = userLabel.PreferredWidth;
 
                 timeLabel = new System.Windows.Forms.Label();
                 timeLabel.ForeColor = Color.Gray;
                 timeLabel.AutoSize = true;
                 timeLabel.Font = new Font("Verdana", 8);
-                timeLabel.Location = new Point(x + x2 + 5 , 7);
+                timeLabel.Location = new Point(x + x3 + 5 , 7);
 
                 DateTime now = DateTime.Now;
                 TimeSpan ts = now - time;
@@ -612,8 +614,8 @@ namespace Assignment4
                 if (count > 0)
                 {
                     redditLabel.Location = new Point(0, 28);
-                    int x3 = RedditLabel.PreferredWidth;
-                    int y3 = redditLabel.PreferredHeight;
+                    int x4 = RedditLabel.PreferredWidth;
+                    int y4 = redditLabel.PreferredHeight;
 
                     titleLabel.Location = new Point(0, y + 36);
 
@@ -629,9 +631,9 @@ namespace Assignment4
                     {
                         contentLabel.Location = new Point(15, y + 68);
                     }
-                    userLabel.Location = new Point(x + 2, 7);
-                    int x4 = userLabel.PreferredWidth;
-                    timeLabel.Location = new Point(x + x2 + 5, 7);
+                    userLabel.Location = new Point(x + 2, 31);
+                    int x5 = userLabel.PreferredWidth;
+                    timeLabel.Location = new Point(x + x5 + 5, 31);
                 }
 
                 System.Windows.Forms.PictureBox commentIcon = new System.Windows.Forms.PictureBox();
@@ -1239,6 +1241,17 @@ namespace Assignment4
             InitializeComponent();
             CenterToScreen();
 
+            SortedSet<User> users = new SortedSet<User>();
+            SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
+            List<Post> posts = new List<Post>();
+            List<Comment> comments = new List<Comment>();
+            List<DisplayPost> displays = new List<DisplayPost>();
+
+            ReadInputFiles(users, subreddits, posts, comments);
+
+            int count = 0;
+            int i = 0;
+
             //Disbales minimize and maximize buttons
             MinimizeBox = false;
             MaximizeBox = false;
@@ -1252,16 +1265,184 @@ namespace Assignment4
             searchTextBox.Leave += new EventHandler(searchTextBox_Leave);
             searchTextBox_SetText();
 
-            SortedSet<User> users = new SortedSet<User>();
-            SortedSet<Subreddit> subreddits = new SortedSet<Subreddit>();
-            List<Post> posts = new List<Post>();
-            List<Comment> comments = new List<Comment>();
-            List<DisplayPost> displays = new List<DisplayPost>();
+            createPost.Click += new EventHandler(createPost_Click);
 
-            ReadInputFiles(users, subreddits, posts, comments);
+            void createPost_Click(object sender, EventArgs e)
+            {
+                if(!logged)
+                {
+                    MessageBox.Show("Please log in to create a post.");
+                }
+                if (logged)
+                {
+                    System.Windows.Forms.Panel p = sender as System.Windows.Forms.Panel;
 
-            int count = 0;
-            int i = 0;
+                    Form newForm = new Form();
+                    newForm.Size = new Size(800, 350);
+                    newForm.BackColor = Color.Black;
+                    newForm.StartPosition = FormStartPosition.CenterParent;
+                    newForm.MaximizeBox = false;
+                    newForm.MinimizeBox = false;
+                    newForm.FormBorderStyle = FormBorderStyle.FixedSingle;
+                    newForm.Text = "Create a post";
+
+                    System.Windows.Forms.Label redditLabel = new System.Windows.Forms.Label();
+                    System.Windows.Forms.ComboBox reddits = new System.Windows.Forms.ComboBox();
+                    System.Windows.Forms.RichTextBox content = new System.Windows.Forms.RichTextBox();
+                    System.Windows.Forms.RichTextBox title = new System.Windows.Forms.RichTextBox();
+                    System.Windows.Forms.Label titleLabel = new System.Windows.Forms.Label();
+                    System.Windows.Forms.Label contentLabel = new System.Windows.Forms.Label();
+                    System.Windows.Forms.Button submitPost = new System.Windows.Forms.Button();
+                    System.Windows.Forms.Button cancel = new System.Windows.Forms.Button();
+
+                    redditLabel = new System.Windows.Forms.Label();
+                    redditLabel.ForeColor = Color.White;
+                    redditLabel.Text = "Choose a community: ";
+                    redditLabel.AutoSize = true;
+                    redditLabel.Font = new Font("Verdana", 12);
+                    redditLabel.Location = new Point(0, 10);
+
+                    reddits = new System.Windows.Forms.ComboBox();
+                    reddits.AutoSize = true;
+                    reddits.Font = new Font("Verdana", 10);
+                    reddits.DropDownStyle = ComboBoxStyle.DropDownList;
+                    reddits.Location = new Point(190, 6);
+                    foreach(Subreddit s in subreddits)
+                    {
+                        reddits.Items.Add(s.Name);
+                    }
+                    reddits.Items.Remove("all");
+                    reddits.SelectedIndex = 0;
+
+                    titleLabel = new System.Windows.Forms.Label();
+                    titleLabel.ForeColor = Color.White;
+                    titleLabel.Text = "Title: ";
+                    titleLabel.AutoSize = true;
+                    titleLabel.Font = new Font("Verdana", 12);
+                    titleLabel.Location = new Point(0, 45);
+
+                    title = new System.Windows.Forms.RichTextBox();
+                    title.Location = new Point(100, 42);
+                    title.Multiline = false;
+                    title.Font = new Font("Verdana", 10);
+                    title.Size = new Size(300, 20);
+                    title.MaxLength = 100;
+
+                    contentLabel = new System.Windows.Forms.Label();
+                    contentLabel.ForeColor = Color.White;
+                    contentLabel.Text = "Content: ";
+                    contentLabel.AutoSize = true;
+                    contentLabel.Font = new Font("Verdana", 12);
+                    contentLabel.Location = new Point(0, 80);
+
+                    content = new System.Windows.Forms.RichTextBox();
+                    content.Location = new Point(100, 80);
+                    content.Multiline = false;
+                    content.Size = new Size(550, 200);
+                    content.Font = new Font("Verdana", 10);
+                    content.Text = "Text(optional)";
+                    content.ForeColor = Color.Gray;
+                    content.MaxLength = 300;
+
+                    content.Enter += new EventHandler(content_Enter);
+                    content.Leave += new EventHandler(content_Leave);
+                    content_SetText();
+
+                    submitPost.Text = "Submit";
+                    submitPost.AutoSize = true;
+                    submitPost.Font = new Font("Verdana", 8);
+                    submitPost.Location = new Point(490, 285);
+                    submitPost.BackColor = Color.White;
+                    submitPost.Click += new EventHandler(submitPost_Click);
+
+                    cancel.Text = "Cancel";
+                    cancel.AutoSize = true;
+                    cancel.Font = new Font("Verdana", 8);
+                    cancel.Location = new Point(576, 285);
+                    cancel.BackColor = Color.White;
+                    cancel.Click += new EventHandler(cancel_Click);
+
+                    newForm.Controls.Add(redditLabel);
+                    newForm.Controls.Add(reddits);
+                    newForm.Controls.Add(titleLabel);
+                    newForm.Controls.Add(title);
+                    newForm.Controls.Add(contentLabel);
+                    newForm.Controls.Add(content);
+                    newForm.Controls.Add(submitPost);
+                    newForm.Controls.Add(cancel);
+
+                    newForm.ShowDialog();
+
+                    //Event handling for RTB
+                    void content_SetText()
+                    {
+                        content.Text = "Text(optional)";
+                        content.ForeColor = Color.Gray;
+                        return;
+                    }
+                    void content_Enter(object sender2, EventArgs e2)
+                    {
+                        if (content.ForeColor == Color.Black)
+                        {
+                            return;
+                        }
+                        content.Text = "";
+                        content.ForeColor = Color.Black;
+                    }
+                    void content_Leave(object sender3, EventArgs e3)
+                    {
+                        if (content.Text.Trim() == "")
+                        {
+                            content_SetText();
+                        }
+                    }
+                    void submitPost_Click(object sender4, EventArgs e4)
+                    {
+                        if(title.Text == "")
+                        {
+                            MessageBox.Show("Title is empty!");
+                        }
+                        DateTime time = DateTime.Now;
+
+                        DisplayPost temp = new DisplayPost(reddits.SelectedItem.ToString() ,title.Text,loggedUser,time,content.Text,count,0);
+                        displays.Insert(0, temp);
+                        count++;
+
+                        foreach (DisplayPost d in displays)
+                        {
+                            d.postPanel.AutoSize = true;
+                            newForm.Controls.Add(d.postPanel);
+                        }
+                        
+                        using (StreamWriter w = File.AppendText(@"..\\..\\posts.txt"))
+                        {
+                            int min = 0000;
+                            int max = 9999;
+                            Random rng = new Random();
+                            int id = rng.Next(min, max);
+
+                            foreach (Subreddit s in subreddits.Where(xyz => xyz.Name == reddits.Text.Trim()))
+                            {
+                                foreach (User u in users.Where(x => x.Name == loggedUser))
+                                {
+                                    w.WriteLine();
+                                    w.WriteLine(0 + "\t" + id + "\t" + u.Id + "\t" + title.Text + "\t" + content.Text + "\t" + s.Id + "\t" + 1 + "\t" + 0 + "\t" + 0 + "\t" + 
+                                        time.Year + "\t" + time.Month + "\t" + time.Day + "\t" + time.Hour + "\t" + time.Minute + "\t" + time.Second + "\t" + 0 + "\t" + 0 + "\t" + 0);
+                                }
+                            }
+                        }
+                        
+                        newForm.Close();
+                    }
+                    //Closes the post making window
+                    void cancel_Click(object sender5, EventArgs e5)
+                    {
+                        newForm.Close();
+                    }
+                }
+
+            }
+
             var pLinq = from P in posts
                         orderby P.Score descending
                         select P;
@@ -1329,7 +1510,7 @@ namespace Assignment4
             ReadInputFiles(users, subreddits, posts, comments);
 
             Form newForm = new Form();
-            newForm.Size = new Size(800, 500);
+            newForm.Size = new Size(880, 500);
             newForm.BackColor = Color.Black;
             newForm.StartPosition = FormStartPosition.CenterParent;
             newForm.MaximizeBox = false;
@@ -1345,6 +1526,7 @@ namespace Assignment4
             System.Windows.Forms.Label commentLabel = new System.Windows.Forms.Label();
             System.Windows.Forms.Button submitComment = new System.Windows.Forms.Button();
 
+            
             foreach (Post ps in posts.Where( x=> x.Title == title.Trim()))
             {
 
@@ -1384,7 +1566,7 @@ namespace Assignment4
                     userLabel.Text = "| Posted by u/" + u.Name;
                     userLabel.AutoSize = true;
                     userLabel.Font = new Font("Verdana", 8);
-                    userLabel.Location = new Point(x2 + 40, 9);
+                    userLabel.Location = new Point(x + x2 - 7, 9);
                 }
 
                 int x3 = userLabel.PreferredWidth;
@@ -1393,7 +1575,7 @@ namespace Assignment4
                 timeLabel.ForeColor = Color.Gray;
                 timeLabel.AutoSize = true;
                 timeLabel.Font = new Font("Verdana", 8);
-                timeLabel.Location = new Point(x2 + x3 + 40, 9);
+                timeLabel.Location = new Point(x + x2 + x3 - 7, 9);
 
                 DateTime now = DateTime.Now;
                 DateTime time = ps.TimeStamp;
@@ -1612,18 +1794,37 @@ namespace Assignment4
                 {
                     MessageBox.Show("Please enter a comment!"); //Just to show it works
                 }
+                DateTime time = DateTime.Now;
 
-                DisplayComment temp = new DisplayComment(loggedUser, 1, DateTime.Now, commentBox.Text, count, loggedUser);
+                DisplayComment temp = new DisplayComment(loggedUser, 1, time, commentBox.Text, count, loggedUser);
                 displays.Insert(0,temp);
                 count++;
-                commentBox.Text = "What are your thoughts?";
-                commentBox.ForeColor = Color.Gray;
 
                 foreach (DisplayComment d in displays)
                 {
                     d.commentPanel.AutoSize = true;
                     newForm.Controls.Add(d.commentPanel);
                 }
+
+                using (StreamWriter w = File.AppendText(@"..\\..\\comments.txt"))
+                {
+                    int min = 0000;
+                    int max = 9999;
+                    Random rng = new Random();
+                    int id = rng.Next(min, max);
+
+                    foreach (Post p2 in posts.Where(xy => xy.Title == titleLabel.Text.Trim()))
+                    {
+                        foreach (User u in users.Where(x => x.Name == loggedUser))
+                        {
+                            w.WriteLine();
+                            w.WriteLine(id + "\t" + u.Id + "\t" + commentBox.Text + "\t" + p2.Id + "\t" + 1 + "\t" + 0 + "\t" + time.Year + "\t" + time.Month + "\t" + time.Day
+                                + "\t" + time.Hour + "\t" + time.Minute + "\t" + time.Second + "\t" + 0 + "\t" + 0 + "\t" + 0);
+                        }
+                    }
+                }
+                commentBox.Text = "What are your thoughts?";
+                commentBox.ForeColor = Color.Gray;
             }
         }
 
@@ -1633,7 +1834,7 @@ namespace Assignment4
             if(logInButton.Text == "Log Out")
             {
                 logInButton.Text = "Log In";
-                userLabel.Text = "";
+                userLabel.Text = null;
                 karmaLabel.Text = " ";
 
                 return;
@@ -1779,6 +1980,7 @@ namespace Assignment4
             string temp = comboBox.SelectedItem.ToString();
 
             int count = 0;
+            int test = 0;
             var pLinq = from P in posts
                         orderby P.Score descending
                         select P;
@@ -1813,6 +2015,7 @@ namespace Assignment4
                             DisplayPost temp2 = new DisplayPost(s.Name, p.Title, u.Name, p.TimeStamp, p.PostContent, count, i);
                             displays.Add(temp2);
                             count++;
+                            
                         }
                     }
                 }
@@ -1864,7 +2067,7 @@ namespace Assignment4
                 }
                 foreach (DisplayPost d in displays)
                 {
-                    d.PostPanel.Tag = d.redditLabel;
+                    d.PostPanel.Tag = d.titleLabel;
                     d.PostPanel.Click += new EventHandler(panel1_Click);
 
                     mainPanel.Controls.Add(d.postPanel);
@@ -1947,13 +2150,12 @@ namespace Assignment4
                     }
                     foreach (DisplayPost d in displays)
                     {
-                        d.PostPanel.Tag = d.redditLabel;
+                        d.PostPanel.Tag = d.titleLabel;
                         d.PostPanel.Click += new EventHandler(panel1_Click);
 
                         mainPanel.Controls.Add(d.postPanel);
                         mainPanel.AutoScroll = true;
                     }
-
                     //If no results come up from search, print error message
                     string temp3 = displays.Count().ToString();
                     if(temp3 == "0")

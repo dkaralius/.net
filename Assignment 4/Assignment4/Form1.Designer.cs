@@ -40,6 +40,7 @@
             this.logInButton = new System.Windows.Forms.Button();
             this.errorLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.createPost = new System.Windows.Forms.Button();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -164,13 +165,23 @@
             this.label2.TabIndex = 6;
             this.label2.Text = "label2";
             // 
+            // createPost
+            // 
+            this.createPost.Location = new System.Drawing.Point(11, 40);
+            this.createPost.Name = "createPost";
+            this.createPost.Size = new System.Drawing.Size(90, 23);
+            this.createPost.TabIndex = 7;
+            this.createPost.Text = "Create A Post";
+            this.createPost.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ClientSize = new System.Drawing.Size(895, 501);
+            this.ClientSize = new System.Drawing.Size(895, 518);
+            this.Controls.Add(this.createPost);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.errorLabel);
             this.Controls.Add(this.panel2);
@@ -201,7 +212,7 @@
         private System.Windows.Forms.Label errorLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label karmaLabel;
-
+        private System.Windows.Forms.Button createPost;
     }
 }
 
