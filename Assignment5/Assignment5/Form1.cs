@@ -620,9 +620,10 @@ namespace Assignment5
                     {
                         IncrementScore(200);
                     }
-                    //If user has 10 or more  but no more than 19, reward more points and go faster (Level 2)
+                    //If user has 5 or more but no more than 10, reward more points and go faster (Level 2)
                     if(rowCounter >= 5 && rowCounter <= 10)
                     {
+                        //If level 1, increase the level and time interval
                         if(levelCounter == 1)
                         {
                             levelCounter += 1; //Add 1 to level, make it level 2
@@ -630,6 +631,7 @@ namespace Assignment5
                             IncrementScore(400);
                             tmr.Interval = 750; //Change interval at which blocks fall
                         }
+                        //Else, already on level 2, so just reward points
                         if(levelCounter == 2)
                         {
                             IncrementScore(400);
@@ -638,6 +640,7 @@ namespace Assignment5
                     //Level 3
                     if (rowCounter > 10 && rowCounter <= 15)
                     {
+                        //If level 2, increase the level and time interval
                         if (levelCounter == 2)
                         {
                             levelCounter += 1; //Add 1 to level, make it level 3
@@ -645,6 +648,7 @@ namespace Assignment5
                             IncrementScore(800);
                             tmr.Interval = 500; //Change interval at which blocks fall
                         }
+                        //Else, already on level 3, so just rewards points
                         if (levelCounter == 3)
                         {
                             IncrementScore(800);
@@ -653,6 +657,7 @@ namespace Assignment5
                     //Level 4
                     if(rowCounter > 15 && rowCounter <= 20)
                     {
+                        //If level 3, increase the level and time interval
                         if (levelCounter == 3)
                         {
                             levelCounter += 1; //Add 1 to level, make it level 4
@@ -660,6 +665,7 @@ namespace Assignment5
                             IncrementScore(1600);
                             tmr.Interval = 400; //Change interval at which blocks fall
                         }
+                        //Else, already on level 4, so just rewards points
                         if (levelCounter == 4)
                         {
                             IncrementScore(1600);
@@ -668,13 +674,15 @@ namespace Assignment5
                     //Level 5, max level
                     if (rowCounter > 20)
                     {
-                        if (levelCounter == 5)
+                        //If level 4, increase the level and time interval
+                        if (levelCounter == 4)
                         {
                             levelCounter += 1; //Add 1 to level, make it level 5
                             LevelUp(levelCounter);
                             IncrementScore(3200);
                             tmr.Interval = 250; //Change interval at which blocks fall
                         }
+                        //Else, already on level 5, so just rewards points
                         if (levelCounter == 5)
                         {
                             IncrementScore(3200);
