@@ -33,7 +33,7 @@ namespace Assignment5
             new Point[]{new Point(4, -1),new Point(4, -2),new Point(5, -2),new Point(6, -2)}, //L-Shape
             new Point[]{new Point(4, -1),new Point(4, -2),new Point(5, -1),new Point(6, -1)}, //Inverted L-Shape
             new Point[]{new Point(4, -2),new Point(5, -1),new Point(5, -2),new Point(6, -1)}, //Z-Shape
-            new Point[]{new Point(4, -1),new Point(5, -1),new Point(5, -2),new Point(6, -2)}, //Inverted
+            new Point[]{new Point(4, -1),new Point(5, -1),new Point(5, -2),new Point(6, -2)}, //Inverted Z-Shape
             new Point[]{new Point(4, -1),new Point(4, -2),new Point(4, -3),new Point(4, -4)}, //Line-Shape
             new Point[]{new Point(4, -1),new Point(4, -2),new Point(5, -1),new Point(5, -2)} //Square-Shape
         };
