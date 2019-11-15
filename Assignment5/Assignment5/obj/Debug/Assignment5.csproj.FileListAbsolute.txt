@@ -1,8 +1,10 @@
-C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment5\Assignment5\Assignment5\bin\Debug\Assignment5.exe.config
-C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment5\Assignment5\Assignment5\bin\Debug\Assignment5.exe
-C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment5\Assignment5\Assignment5\bin\Debug\Assignment5.pdb
-C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment5\Assignment5\Assignment5\obj\Debug\Assignment5.csprojAssemblyReference.cache
-C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment5\Assignment5\Assignment5\obj\Debug\Assignment5.Properties.Resources.resources
-C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment5\Assignment5\Assignment5\obj\Debug\Assignment5.csproj.GenerateResource.cache
-C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment5\Assignment5\Assignment5\obj\Debug\Assignment5.exe
-C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment5\Assignment5\Assignment5\obj\Debug\Assignment5.pdb
+C:\Users\Josue\Documents\Visual Studio 2017\Projects\Assignment5\Assignment5\bin\Debug\Assignment5.exe.config
+C:\Users\Josue\Documents\Visual Studio 2017\Projects\Assignment5\Assignment5\bin\Debug\Assignment5.exe
+C:\Users\Josue\Documents\Visual Studio 2017\Projects\Assignment5\Assignment5\bin\Debug\Assignment5.pdb
+C:\Users\Josue\Documents\Visual Studio 2017\Projects\Assignment5\Assignment5\obj\Debug\Assignment5.csprojAssemblyReference.cache
+C:\Users\Josue\Documents\Visual Studio 2017\Projects\Assignment5\Assignment5\obj\Debug\Assignment5.Form1.resources
+C:\Users\Josue\Documents\Visual Studio 2017\Projects\Assignment5\Assignment5\obj\Debug\Assignment5.Properties.Resources.resources
+C:\Users\Josue\Documents\Visual Studio 2017\Projects\Assignment5\Assignment5\obj\Debug\Assignment5.csproj.GenerateResource.cache
+C:\Users\Josue\Documents\Visual Studio 2017\Projects\Assignment5\Assignment5\obj\Debug\Assignment5.csproj.CoreCompileInputs.cache
+C:\Users\Josue\Documents\Visual Studio 2017\Projects\Assignment5\Assignment5\obj\Debug\Assignment5.exe
+C:\Users\Josue\Documents\Visual Studio 2017\Projects\Assignment5\Assignment5\obj\Debug\Assignment5.pdb

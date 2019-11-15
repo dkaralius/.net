@@ -20,6 +20,258 @@ using System.Windows.Forms;
 
 namespace Assignment5
 {
+
+
+    //Main Form Logic
+    public partial class Form1 : Form
+    {
+        //Counter variables for score,lines, and level
+        private int score = 0;
+        private int lineCount = 0;
+        private int level = 0;
+        public int timecount = 0;
+
+        //Timers
+        public static System.Timers.Timer everySecond;
+        public static Stopwatch theTime;
+
+        public Form1()
+        {
+            InitializeComponent();
+            timer.Text = "0:00";
+
+            //Initialize timer for how long user as played
+            theTime = new Stopwatch();
+            everySecond = new System.Timers.Timer(1000);
+            everySecond.Elapsed += IncrementTime;
+            everySecond.AutoReset = true;
+
+            //Add event handlers
+            this.Shown += Form1_Shown;
+            this.Paint += Form1_Paint;
+            this.Button1.Click += Button1_Click; //New Game
+            this.Button2.Click += Button2_Click; //How to play
+            this.Button3.Click += Button3_Click; //Pause/Resume
+            this.game.IncrementScore += game_IncrementScore;
+            this.game.IncrementLines += game_IncrementLines;
+            this.game.LevelUp += game_LevelUp;
+            this.game.ShapeChanged += game_ShapeChanged;
+            this.game.KeyDown += keyEventHandler;
+        }
+
+        //Event handler when the user presses the arrow keys or the WASD keys
+        private void keyEventHandler(object sender, KeyEventArgs e)
+        {
+            //If user presses arrow keys, supress them so it won't focus cells
+            switch (e.KeyData & Keys.KeyCode)
+            {
+                case Keys.Up:
+                case Keys.Right:
+                case Keys.Down:
+                case Keys.Left:
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+                    break;
+            }
+            //Else if user presses WASD
+            if (e.KeyCode == Keys.A)
+            {
+                game.moveLeft();
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                game.moveRight();
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                game.moveDown();
+            }
+            if (e.KeyCode == Keys.W)
+            {
+                game.rotateShape();
+            }
+        }
+
+        //Increments the timer so the user can see how long they've been playing
+        public void IncrementTime(object sender, ElapsedEventArgs e)
+        {
+            this.BeginInvoke((System.Windows.Forms.MethodInvoker)delegate () { timer.Text = String.Format("{0:#0}:{1:00}", theTime.Elapsed.Minutes, theTime.Elapsed.Seconds); });
+            timecount++;
+
+            if ((timecount % 20 == 0) && ((timecount / 10) > Convert.ToInt32(levels.Text)))
+            {
+                this.BeginInvoke((System.Windows.Forms.MethodInvoker)delegate () { levels.Text = (Convert.ToInt32(levels.Text) + 1).ToString(); });
+                             
+            }
+        }
+
+        //Creates the grid that the user will play on and see block previews
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            game.CurrentCell = null;
+            //Create 10 columns in the grid, the classic number of columns in Tetris
+            for (int x = 1; x <= 10; x++)
+            {
+                game.Columns.Add(new DataGridViewTextBoxColumn());
+                game.Columns[x - 1].Width = 30; //Width of 30 pixels
+
+                //Create 6 columns for the block preview
+                if (x < 7)
+                {
+                    shapePreview.Columns.Add(new DataGridViewTextBoxColumn());
+                    shapePreview.Columns[x - 1].Width = 30; //Width of 30 pixels
+                }
+            }
+            //Create 6 rows for the block preview
+            shapePreview.Rows.Add(6);
+            //Create 15 rows for the grid
+            game.Rows.Add(15);
+
+            //Iterate 15 times(since 15 rows)
+            for (int x = 1; x <= 15; x++)
+            {
+                //Set the height of rows to be 30 pixels
+                game.Rows[x - 1].Height = 30;
+
+                //Set height of all block preview rows to also be 30 pixels
+                if (x < 7)
+                {
+                    shapePreview.Rows[x - 1].Height = 30;
+                }
+            }
+        }
+
+        //Removes the initial selected cell when you start the game
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            shapePreview.CurrentCell = null;
+            game.CurrentCell = null;
+            game.ClearSelection();
+        }
+
+        //Draws the outline of the grid that the user will play the game on
+        private void Form1_Paint(object sender, PaintEventArgs e)
+        {
+            Point[] points = { game.Location, new Point(game.Left, game.Bottom), new Point(game.Right, game.Bottom), new Point(game.Right, game.Top) };
+            Pen outline = new Pen(Color.Black, 2);
+            e.Graphics.DrawLines(outline, points);
+            int[] cellLines = { 1, 2, 9, 10, 13, 14 };
+        }
+
+        //When user clicks on "New game". Starts a new game!
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            //Resets score and time
+            score = 0;
+            theTime.Reset();
+            timer.Text = "0:00";
+            scoreLabel.Text = score.ToString("000000");
+            lines.Text = "0";
+            levels.Text = "0";
+
+            //Restarts the timer, starts a new game, and enables pause button
+            theTime.Start();
+            everySecond.Enabled = true;
+            game.newGame();
+            Button3.Enabled = true;
+        }
+
+        //When user clicks on "How To Play", teaches user how to play
+        private void Button2_Click(object sender, EventArgs e)
+        {
+            string message = "The rules are simple! I mean it is a classic game..." + "There are 5 levels!\n\n" +
+                "Level 1 - 1 second interval, 200 points per row\n" +
+                "Level 2 - .75 second interval, 400 points per row\n" +
+                "Level 3 - .50 second interval, 800 points per row\n" +
+                "Level 4 - .40 second interval, 1,600 points per row\n" +
+                "Level 5 - .25 second interval, 3,200 points per row";
+            string caption = "How to Play";
+            MessageBoxButtons buttons = MessageBoxButtons.OK;
+            MessageBox.Show(message, caption, buttons);
+        }
+
+        //When user clicks on "Pause/Resume"
+        private void Button3_Click(object sender, EventArgs e)
+        {
+            if (Button3.Text == "Pause")
+            {
+                Button3.Text = "Resume";
+                theTime.Stop(); //Pauses the timer
+                game.pauseGame(); //Pause the game
+                return;
+            }
+            if (Button3.Text == "Resume")
+            {
+                Button3.Text = "Pause";
+                theTime.Start(); //Resumes the timer
+                game.resumeGame(); //Resume the game
+                game.Focus(); //Sets focus back to the game, so user doesn't have to click on it
+                game.ClearSelection(); //A black cell appears when you re-focus, so this clears that cell
+                return;
+            }
+        }
+
+        //When user scores points, update the scores label
+        private void game_IncrementScore(int newPoints)
+        {
+            score += newPoints;
+            scoreLabel.Text = score.ToString("000000");
+        }
+
+        //When the user clears a row, update the lines label
+        private void game_IncrementLines(int newLines)
+        {
+            lineCount = newLines;
+            lines.Text = lineCount.ToString();
+        }
+
+        //When the user levels up
+        private void game_LevelUp(int newLevel)
+        {
+            level = newLevel;
+            this.BeginInvoke((System.Windows.Forms.MethodInvoker)delegate () { levels.Text = (Convert.ToInt32(levels.Text) + 1).ToString(); });
+
+        }
+
+        //When the current block is placed, update the preview to show the next block
+        private void game_ShapeChanged(Point[] shapePoints, string shapeColor)
+        {
+            Point[] pts = (Point[])shapePoints.Clone();
+
+            for (int y = 0; y <= 4; y++)
+            {
+                for (int x = 0; x <= 4; x++)
+                {
+                    shapePreview.Rows[y].Cells[x].Style.BackColor = Color.DarkGray;
+                }
+            }
+            int minX = pts.Min((p) => p.X);
+            int minY = pts.Min((p) => p.Y);
+            for (int x = 0; x <= pts.GetUpperBound(0); x++)
+            {
+                pts[x].Offset(-minX, -minY);
+            }
+            int w = pts.Max((p) => p.X) - pts.Min((p) => p.X);
+            int h = pts.Max((p) => p.Y) - pts.Min((p) => p.Y);
+            int offSetX = Convert.ToInt32(Math.Floor((4 - w) / 2.0));
+            int offSetY = Convert.ToInt32(Math.Floor((4 - h) / 2.0));
+
+            //Dictionary of colors
+            Dictionary<string, Color> colors = new Dictionary<string, Color>()
+            {
+                {"R", Color.Red},{"G", Color.Green},{"B", Color.Blue},{"Y", Color.Yellow},{"P", Color.Purple},{"C", Color.Cyan},{"T", Color.Teal}
+            };
+
+            for (int x = 0; x <= pts.GetUpperBound(0); x++)
+            {
+                pts[x].Offset(offSetX, offSetY);
+                shapePreview.Rows[pts[x].Y].Cells[pts[x].X].Style.BackColor = colors[shapeColor];
+            }
+            game.Focus(); //Sets focus to the game
+            game.CurrentCell = null; //Clears selected cell (Prevents a black cell from appearing)
+        }
+    }
+
     //Shape logic, includes shape type, color, and rotations
     class Shape
     {
@@ -369,6 +621,7 @@ namespace Assignment5
         private int rowCounter = 0;
         private int levelCounter = 1;
         private int moveCounter = 0;
+        private int columnCounter = 0;
 
         //Random generator for shape color and shape type
         private Random rand = new Random();
@@ -377,6 +630,8 @@ namespace Assignment5
         private int deleteCounter = 1;
         private int deleteRow;
         private bool missATick = false;
+        
+
 
         //Variables that hold information about the shape and grid
         private string[][] gameGrid; //Points use on the grid
@@ -401,6 +656,22 @@ namespace Assignment5
             deletetmr.Tick += deletetmr_Tick;
         }
 
+        // ends the game. does not clear board
+        public void endGame()
+        {
+            tmr.Stop(); //Stops the tmr
+            Form1.theTime.Reset(); // resets time
+            tmr.Interval = 1000; //Default value of 1 second (Blocks drop 1 row per second)
+            listShapes.Clear(); //Clears the list of shapes
+            moveCounter = 0; //Sets the counter of moves to 0
+
+            gameGrid = new string[15][]; //15 Rows
+            for (int x = 1; x <= 15; x++)
+            {
+                string[] row = new string[10];
+                gameGrid[x - 1] = (string[])row.Clone();
+            }
+        }
         //Clears the grid and creates a new game
         public void newGame()
         {
@@ -548,6 +819,18 @@ namespace Assignment5
             if (sender.CurrentPoints.Any((p) => p.Y < 0))
             {
                 tmr.Stop();
+                DialogResult dr;
+                string caption = "Game Over";
+                string message = "Dude, do you even tetris?";
+                MessageBoxButtons buttons = MessageBoxButtons.OK;
+                dr = MessageBox.Show(message, caption, buttons);
+
+                if (dr == DialogResult.OK)
+                    this.endGame();
+
+                this.Refresh();
+
+                
             }
             currentShape.TouchDown -= currentShape_TouchDown;
             listShapes.Remove(sender);
@@ -556,6 +839,7 @@ namespace Assignment5
             {
                 currentShape = null;
                 moveCounter = 27;
+                rowCounter++;
             }
             else
             {
@@ -564,7 +848,11 @@ namespace Assignment5
                 {
                     ShapeChanged(currentShape.CurrentPoints, currentShape.ShapeColor);
                 }
+                columnCounter++;
             }
+
+            
+
         }
 
         //Deletes full rows and rewards points and possible level up
@@ -616,15 +904,15 @@ namespace Assignment5
                     IncrementLines(rowCounter);
 
                     //Initial phase of game (Level 1)
-                    if(rowCounter < 5)
+                    if (rowCounter < 5)
                     {
                         IncrementScore(200);
                     }
                     //If user has 5 or more but no more than 10, reward more points and go faster (Level 2)
-                    if(rowCounter >= 5 && rowCounter <= 10)
+                    if ((rowCounter >= 5 && rowCounter <= 10))
                     {
                         //If level 1, increase the level and time interval
-                        if(levelCounter == 1)
+                        if (levelCounter == 1)
                         {
                             levelCounter += 1; //Add 1 to level, make it level 2
                             LevelUp(levelCounter);
@@ -632,7 +920,7 @@ namespace Assignment5
                             tmr.Interval = 750; //Change interval at which blocks fall
                         }
                         //Else, already on level 2, so just reward points
-                        if(levelCounter == 2)
+                        if (levelCounter == 2)
                         {
                             IncrementScore(400);
                         }
@@ -655,7 +943,7 @@ namespace Assignment5
                         }
                     }
                     //Level 4
-                    if(rowCounter > 15 && rowCounter <= 20)
+                    if (rowCounter > 15 && rowCounter <= 20)
                     {
                         //If level 3, increase the level and time interval
                         if (levelCounter == 3)
@@ -706,6 +994,16 @@ namespace Assignment5
             return -1;
         }
 
+        //Method that finds a column
+        private void findFullColumn()
+        {
+            for (int c = 0; c < 10; c++)
+            {
+                if (gameGrid[c].All((s) => !String.IsNullOrEmpty(s)))
+                    this.newGame();
+            }
+        }
+
         //This method handles coloring in the cells with the current block
         private void HasChanged(string[][] grid, bool delete, int deleteRow)
         {
@@ -737,242 +1035,5 @@ namespace Assignment5
         }
     }
 
-    //Main Form Logic
-    public partial class Form1 : Form
-    {
-        //Counter variables for score,lines, and level
-        private int score = 0;
-        private int lineCount = 0;
-        private int level = 0;
-
-        //Timers
-        public static System.Timers.Timer everySecond;
-        public static Stopwatch theTime;
-
-        public Form1()
-        {
-            InitializeComponent();
-            timer.Text = "0:00";
-
-            //Initialize timer for how long user as played
-            theTime = new Stopwatch();
-            everySecond = new System.Timers.Timer(1000);
-            everySecond.Elapsed += IncrementTime;
-            everySecond.AutoReset = true;
-
-            //Add event handlers
-            this.Shown += Form1_Shown;
-            this.Paint += Form1_Paint;
-            this.Button1.Click += Button1_Click; //New Game
-            this.Button2.Click += Button2_Click; //How to play
-            this.Button3.Click += Button3_Click; //Pause/Resume
-            this.game.IncrementScore += game_IncrementScore;
-            this.game.IncrementLines += game_IncrementLines;
-            this.game.LevelUp += game_LevelUp;
-            this.game.ShapeChanged += game_ShapeChanged;
-            this.game.KeyDown += keyEventHandler;
-        }
-
-        //Event handler when the user presses the arrow keys or the WASD keys
-        private void keyEventHandler(object sender, KeyEventArgs e)
-        {
-            //If user presses arrow keys, supress them so it won't focus cells
-            switch (e.KeyData & Keys.KeyCode)
-            {
-                case Keys.Up:
-                case Keys.Right:
-                case Keys.Down:
-                case Keys.Left:
-                    e.Handled = true;
-                    e.SuppressKeyPress = true;
-                    break;
-            }
-            //Else if user presses WASD
-            if (e.KeyCode == Keys.A)
-            {
-                game.moveLeft();
-            }
-            if (e.KeyCode == Keys.D)
-            {
-                game.moveRight();
-            }
-            if (e.KeyCode == Keys.S)
-            {
-                game.moveDown();
-            }
-            if (e.KeyCode == Keys.W)
-            {
-                game.rotateShape();
-            }
-        }
-
-        //Increments the timer so the user can see how long they've been playing
-        public void IncrementTime(object sender, ElapsedEventArgs e)
-        {
-            timer.Text = String.Format("{0:#0}:{1:00}", theTime.Elapsed.Minutes, theTime.Elapsed.Seconds);
-        }
-
-        //Creates the grid that the user will play on and see block previews
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            game.CurrentCell = null;
-            //Create 10 columns in the grid, the classic number of columns in Tetris
-            for (int x = 1; x <= 10; x++)
-            {
-                game.Columns.Add(new DataGridViewTextBoxColumn());
-                game.Columns[x - 1].Width = 30; //Width of 30 pixels
-
-                //Create 6 columns for the block preview
-                if (x < 7)
-                {
-                    shapePreview.Columns.Add(new DataGridViewTextBoxColumn());
-                    shapePreview.Columns[x - 1].Width = 30; //Width of 30 pixels
-                }
-            }
-            //Create 6 rows for the block preview
-            shapePreview.Rows.Add(6);
-            //Create 15 rows for the grid
-            game.Rows.Add(15);
-
-            //Iterate 15 times(since 15 rows)
-            for (int x = 1; x <= 15; x++)
-            {
-                //Set the height of rows to be 30 pixels
-                game.Rows[x - 1].Height = 30;
-
-                //Set height of all block preview rows to also be 30 pixels
-                if (x < 7)
-                {
-                    shapePreview.Rows[x - 1].Height = 30;
-                }
-            }
-        }
-        
-        //Removes the initial selected cell when you start the game
-        private void Form1_Shown(object sender, EventArgs e)
-        {
-            shapePreview.CurrentCell = null;
-            game.CurrentCell = null;
-            game.ClearSelection();
-        }
-        
-        //Draws the outline of the grid that the user will play the game on
-        private void Form1_Paint(object sender, PaintEventArgs e)
-        {
-            Point[] points = { game.Location, new Point(game.Left, game.Bottom), new Point(game.Right, game.Bottom), new Point(game.Right, game.Top) };
-            Pen outline = new Pen(Color.Black, 2);
-            e.Graphics.DrawLines(outline, points);
-            int[] cellLines = { 1, 2, 9, 10, 13, 14 };
-        }
-
-        //When user clicks on "New game". Starts a new game!
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            //Resets score and time
-            score = 0;
-            theTime.Reset();
-            timer.Text = "0:00";
-            scoreLabel.Text = score.ToString("000000");
-            lines.Text = "0";
-
-            //Restarts the timer, starts a new game, and enables pause button
-            theTime.Start();
-            everySecond.Enabled = true;
-            game.newGame();
-            Button3.Enabled = true;
-        }
-
-        //When user clicks on "How To Play", teaches user how to play
-        private void Button2_Click(object sender, EventArgs e)
-        {
-            string message = "The rules are simple! I mean it is a classic game..." + "There are 5 levels!\n\n" +
-                "Level 1 - 1 second interval, 200 points per row\n" + 
-                "Level 2 - .75 second interval, 400 points per row\n" + 
-                "Level 3 - .50 second interval, 800 points per row\n" + 
-                "Level 4 - .40 second interval, 1,600 points per row\n" + 
-                "Level 5 - .25 second interval, 3,200 points per row";
-            string caption = "How to Play";
-            MessageBoxButtons buttons = MessageBoxButtons.OK;
-            MessageBox.Show(message, caption, buttons);
-        }
-
-        //When user clicks on "Pause/Resume"
-        private void Button3_Click(object sender, EventArgs e)
-        {
-            if(Button3.Text == "Pause")
-            {
-                Button3.Text = "Resume";
-                theTime.Stop(); //Pauses the timer
-                game.pauseGame(); //Pause the game
-                return;
-            }
-            if(Button3.Text == "Resume")
-            {
-                Button3.Text = "Pause";
-                theTime.Start(); //Resumes the timer
-                game.resumeGame(); //Resume the game
-                game.Focus(); //Sets focus back to the game, so user doesn't have to click on it
-                game.ClearSelection(); //A black cell appears when you re-focus, so this clears that cell
-                return;
-            }
-        }
-
-        //When user scores points, update the scores label
-        private void game_IncrementScore(int newPoints)
-        {
-            score += newPoints;
-            scoreLabel.Text = score.ToString("000000");
-        }
-
-        //When the user clears a row, update the lines label
-        private void game_IncrementLines(int newLines)
-        {
-            lineCount = newLines;
-            lines.Text = lineCount.ToString();
-        }
-
-        //When the user levels up
-        private void game_LevelUp(int newLevel)
-        {
-            level = newLevel;
-        }
-
-        //When the current block is placed, update the preview to show the next block
-        private void game_ShapeChanged(Point[] shapePoints, string shapeColor)
-        {
-            Point[] pts = (Point[])shapePoints.Clone();
-
-            for (int y = 0; y <= 4; y++)
-            {
-                for (int x = 0; x <= 4; x++)
-                {
-                    shapePreview.Rows[y].Cells[x].Style.BackColor = Color.DarkGray;
-                }
-            }
-            int minX = pts.Min((p) => p.X);
-            int minY = pts.Min((p) => p.Y);
-            for (int x = 0; x <= pts.GetUpperBound(0); x++)
-            {
-                pts[x].Offset(-minX, -minY);
-            }
-            int w = pts.Max((p) => p.X) - pts.Min((p) => p.X);
-            int h = pts.Max((p) => p.Y) - pts.Min((p) => p.Y);
-            int offSetX = Convert.ToInt32(Math.Floor((4 - w) / 2.0));
-            int offSetY = Convert.ToInt32(Math.Floor((4 - h) / 2.0));
-            
-            //Dictionary of colors
-            Dictionary<string, Color> colors = new Dictionary<string, Color>()
-            {
-                {"R", Color.Red},{"G", Color.Green},{"B", Color.Blue},{"Y", Color.Yellow},{"P", Color.Purple},{"C", Color.Cyan},{"T", Color.Teal}
-            };
-
-            for (int x = 0; x <= pts.GetUpperBound(0); x++)
-            {
-                pts[x].Offset(offSetX, offSetY);
-                shapePreview.Rows[pts[x].Y].Cells[pts[x].X].Style.BackColor = colors[shapeColor];
-            }
-            game.Focus(); //Sets focus to the game
-            game.CurrentCell = null; //Clears selected cell (Prevents a black cell from appearing)
-        }
-    }
+  
 }
