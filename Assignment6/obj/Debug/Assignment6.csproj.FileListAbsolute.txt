@@ -1,0 +1,9 @@
+C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment6\Assignment6\Assignment6\bin\Debug\Assignment6.exe.config
+C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment6\Assignment6\Assignment6\bin\Debug\Assignment6.exe
+C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment6\Assignment6\Assignment6\bin\Debug\Assignment6.pdb
+C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment6\Assignment6\Assignment6\obj\Debug\Assignment6.csprojAssemblyReference.cache
+C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment6\Assignment6\Assignment6\obj\Debug\Assignment6.FormHome.resources
+C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment6\Assignment6\Assignment6\obj\Debug\Assignment6.Properties.Resources.resources
+C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment6\Assignment6\Assignment6\obj\Debug\Assignment6.csproj.GenerateResource.cache
+C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment6\Assignment6\Assignment6\obj\Debug\Assignment6.exe
+C:\Users\dkara\Desktop\School\CSCI 473\Assignments\Assignment6\Assignment6\Assignment6\obj\Debug\Assignment6.pdb
