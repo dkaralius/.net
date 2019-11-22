@@ -140,11 +140,14 @@
             this.chart.Dock = System.Windows.Forms.DockStyle.Fill;
             legend1.Name = "Legend1";
             this.chart.Legends.Add(legend1);
-            this.chart.Location = new System.Drawing.Point(50,50);
+            this.chart.Location = new System.Drawing.Point(50, 50);
+            this.chart.Size = new System.Drawing.Size(500, 300);
             this.chart.Name = "chart1";
             this.chart.TabIndex = 0;
             this.chart.Text = "chart1";
-            this.chart.Titles.Add("Test");
+            this.chart.Titles.Add("Computer Science Doctorates Awarded in the US");
+            chartArea1.AxisX.Title = "Years";
+            chartArea1.AxisY.Title = "Computer Science Doctorates";
 
             // 
             // HomeButton
@@ -160,7 +163,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(793, 450);
+            this.ClientSize = new System.Drawing.Size(793, 439);
             this.Controls.Add(this.HomeButton);
             this.Controls.Add(this.chart);
             this.Name = "Chart1";
@@ -345,4 +348,3 @@
         private System.Windows.Forms.Button HomeButton;
     }
 }
-

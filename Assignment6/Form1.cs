@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
@@ -74,22 +75,36 @@ namespace Assignment6
         private void Chart1_Load(object sender, EventArgs e)
         {
             chart.Series.Clear();
-            var series1 = new System.Windows.Forms.DataVisualization.Charting.Series
-            {
-                Name = "Series1",
-                Color = System.Drawing.Color.Green,
-                IsVisibleInLegend = false,
-                IsXValueIndexed = true,
-                ChartType = SeriesChartType.Line
-            };
 
-            this.chart.Series.Add(series1);
+            String slacker; // buffer
+            String[] tokens; // used to store tokens
 
-            for (int i = 0; i < 100; i++)
+            using (StreamReader inFile = new StreamReader("..\\..\\chart1.txt"))
             {
-                series1.Points.AddXY(i, f(i));
+                slacker = inFile.ReadLine();
+
+                while (slacker != null)
+                {
+                    tokens = slacker.Split(' ');
+                    var series1 = new System.Windows.Forms.DataVisualization.Charting.Series
+                    {
+                        Name = "Series1",
+                        Color = System.Drawing.Color.Green,
+                        IsVisibleInLegend = false,
+                        IsXValueIndexed = false,
+                        ChartType = SeriesChartType.Line
+                    };
+
+                    int pointcount = Convert.ToInt32(tokens[0].Trim());
+                    for (int i = 1; i <= pointcount * 2; i++)
+                    {
+                        series1.Points.AddXY(Convert.ToDouble(tokens[i]), Convert.ToDouble(tokens[++i]));                        
+                    }
+                    chart.Invalidate();
+                    slacker = inFile.ReadLine();
+                    this.chart.Series.Add(series1);
+                }
             }
-            chart.Invalidate();
         }
 
         private void Chart1_FormClosed(object sender, FormClosedEventArgs e)
