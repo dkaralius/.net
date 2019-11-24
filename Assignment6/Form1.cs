@@ -66,11 +66,6 @@ namespace Assignment6
                new System.Windows.Forms.FormClosedEventHandler(this.Chart1_FormClosed);
             this.HomeButton.Click += HomeButton_Click;
         }
-        private double f(int i)
-        {
-            var f1 = 59894 - (8128 * i) + (262 * i * i) - (1.6 * i * i * i);
-            return f1;
-        }
 
         private void Chart1_Load(object sender, EventArgs e)
         {
@@ -130,6 +125,47 @@ namespace Assignment6
             this.HomeButton.Click += HomeButton_Click;
         }
 
+        private void Chart2_Load(object sender, EventArgs e)
+        {
+            chart.Series.Clear();
+
+            String slacker; // buffer
+            String[] tokens; // used to store tokens
+
+            using (StreamReader inFile = new StreamReader("..\\..\\chart2.txt"))
+            {
+                slacker = inFile.ReadLine();
+
+                while (slacker != null)
+                {
+                    tokens = slacker.Split('\t');
+                    var series1 = new System.Windows.Forms.DataVisualization.Charting.Series
+                    {
+                        Name = "Series2",
+                        Color = System.Drawing.Color.Yellow,
+                        IsVisibleInLegend = true,
+                        IsXValueIndexed = false,
+                        ChartType = SeriesChartType.Pie,
+                        
+                    };
+
+                    
+                    int pointcount = Convert.ToInt32(tokens[0].Trim());
+                    for (int i = 1; i <= pointcount * 2; i++)
+                    {
+                        series1.Points.AddXY(Convert.ToString(tokens[i]), Convert.ToDouble(tokens[++i]));
+                    }
+
+                    foreach (DataPoint p in series1.Points)
+                    {
+                        p.Label = "#VALX\n#VALY\n#PERCENT";
+                    }
+                    chart.Invalidate();
+                    slacker = inFile.ReadLine();
+                    this.chart.Series.Add(series1);
+                }
+            }
+        }
         private void Chart2_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.Hide();
@@ -153,6 +189,61 @@ namespace Assignment6
             this.HomeButton.Click += HomeButton_Click;
         }
 
+        private void Chart3_Load(object sender, EventArgs e)
+        {
+            chart.Series.Clear();
+
+            String slacker; // buffer
+            String[] tokens; // used to store tokens
+            int seriescount = 1;
+
+            using (StreamReader inFile = new StreamReader("..\\..\\chart3.txt"))
+            {
+                slacker = inFile.ReadLine();
+
+                while (slacker != null)
+                {
+                    tokens = slacker.Split('\t');
+                    var series1 = new System.Windows.Forms.DataVisualization.Charting.Series
+                    {
+                        Name = tokens[0].ToString(),
+                        Color = System.Drawing.Color.Blue,
+                        IsVisibleInLegend = true,
+                        IsXValueIndexed = false,
+                        ChartType = SeriesChartType.Column,
+
+                    };
+
+                    if (seriescount == 1)
+                    {
+                        series1.Color = System.Drawing.Color.Blue;
+                    }
+                    else if (seriescount == 2)
+                    {
+                        series1.Color = System.Drawing.Color.Red;
+                    }
+                    else if (seriescount == 3)
+                    {
+                        series1.Color = System.Drawing.Color.Yellow;
+                    }
+                    else if (seriescount == 4)
+                    {
+                        series1.Color = System.Drawing.Color.Green;
+                    }
+                    int pointcount = Convert.ToInt32(tokens[1].Trim());
+                    for (int i = 2; i <= pointcount * 2; i++)
+                    {
+                        series1.Points.AddXY(Convert.ToString(tokens[i]), Convert.ToDouble(tokens[++i]));
+                    }
+
+                    chart.Invalidate();
+                    slacker = inFile.ReadLine();
+                    this.chart.Series.Add(series1);
+                    seriescount++;
+                }
+            }
+        }
+
         private void Chart3_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.Hide();
@@ -174,6 +265,45 @@ namespace Assignment6
             this.FormClosed +=
                new System.Windows.Forms.FormClosedEventHandler(this.Chart4_FormClosed);
             this.HomeButton.Click += HomeButton_Click;
+        }
+
+        private void Chart4_Load(object sender, EventArgs e)
+        {
+            chart.Series.Clear();
+
+            String slacker; // buffer
+            String[] tokens; // used to store tokens
+
+            using (StreamReader inFile = new StreamReader("..\\..\\chart4.txt"))
+            {
+                slacker = inFile.ReadLine();
+
+                while (slacker != null)
+                {
+                    tokens = slacker.Split('\t');
+                    var series1 = new System.Windows.Forms.DataVisualization.Charting.Series
+                    {
+                        Name = "Series2",
+                        Color = System.Drawing.Color.Red,
+                        IsVisibleInLegend = false,
+                        IsXValueIndexed = false,
+                        ChartType = SeriesChartType.Point,
+
+
+                    };
+
+
+                    int pointcount = Convert.ToInt32(tokens[0].Trim());
+                    for (int i = 1; i <= pointcount * 2; i++)
+                    {
+                        series1.Points.AddXY(Convert.ToString(tokens[i]), Convert.ToDouble(tokens[++i]));
+                    }
+
+                    chart.Invalidate();
+                    slacker = inFile.ReadLine();
+                    this.chart.Series.Add(series1);
+                }
+            }
         }
 
         private void Chart4_FormClosed(object sender, FormClosedEventArgs e)
