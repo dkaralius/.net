@@ -24,6 +24,17 @@ namespace Assignment6
             this.Chart3Button.Click += Chart3Button_Click;
             this.Chart4Button.Click += Chart4Button_Click;
 
+            Chart1Button.Left = ((Chart1Button.Parent.Width - Chart1Button.Width) / 2) - 10;
+            Chart1Button.Top = ((Chart1Button.Parent.Height - Chart1Button.Height) / 2) - 60;
+
+            Chart2Button.Left = ((Chart2Button.Parent.Width - Chart2Button.Width) / 2) - 10;
+            Chart2Button.Top = ((Chart2Button.Parent.Height - Chart2Button.Height) / 2) - 35;
+            
+            Chart3Button.Left = ((Chart3Button.Parent.Width - Chart3Button.Width) / 2) - 10;
+            Chart3Button.Top = ((Chart3Button.Parent.Height - Chart3Button.Height) / 2) - 10;
+
+            Chart4Button.Left = ((Chart4Button.Parent.Width - Chart4Button.Width) / 2) - 10;
+            Chart4Button.Top = ((Chart4Button.Parent.Height - Chart4Button.Height) / 2) + 15;
         }
 
         private void FormHome_FormClosed(object sender, FormClosedEventArgs e)

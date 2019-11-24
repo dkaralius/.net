@@ -36,55 +36,51 @@
             // 
             // Chart1Button
             // 
-            this.Chart1Button.Location = new System.Drawing.Point(16, 15);
-            this.Chart1Button.Margin = new System.Windows.Forms.Padding(4);
+            this.Chart1Button.Location = new System.Drawing.Point(0, 0);
             this.Chart1Button.Name = "Chart1Button";
-            this.Chart1Button.Size = new System.Drawing.Size(100, 28);
+            this.Chart1Button.Size = new System.Drawing.Size(75, 23);
             this.Chart1Button.TabIndex = 0;
             this.Chart1Button.Text = "Line";
             // 
             // Chart2Button
             // 
-            this.Chart2Button.Location = new System.Drawing.Point(16, 50);
-            this.Chart2Button.Margin = new System.Windows.Forms.Padding(4);
+            this.Chart2Button.Location = new System.Drawing.Point(0, 0);
             this.Chart2Button.Name = "Chart2Button";
-            this.Chart2Button.Size = new System.Drawing.Size(100, 28);
+            this.Chart2Button.Size = new System.Drawing.Size(75, 23);
             this.Chart2Button.TabIndex = 1;
             this.Chart2Button.Text = "Pie";
             // 
             // Chart3Button
             // 
-            this.Chart3Button.Location = new System.Drawing.Point(16, 86);
-            this.Chart3Button.Margin = new System.Windows.Forms.Padding(4);
+            this.Chart3Button.Location = new System.Drawing.Point(0, 0);
             this.Chart3Button.Name = "Chart3Button";
-            this.Chart3Button.Size = new System.Drawing.Size(100, 28);
+            this.Chart3Button.Size = new System.Drawing.Size(75, 23);
             this.Chart3Button.TabIndex = 2;
             this.Chart3Button.Text = "Column";
             // 
             // Chart4Button
             // 
-            this.Chart4Button.Location = new System.Drawing.Point(16, 122);
-            this.Chart4Button.Margin = new System.Windows.Forms.Padding(4);
+            this.Chart4Button.Location = new System.Drawing.Point(0, 0);
             this.Chart4Button.Name = "Chart4Button";
-            this.Chart4Button.Size = new System.Drawing.Size(100, 28);
+            this.Chart4Button.Size = new System.Drawing.Size(75, 23);
             this.Chart4Button.TabIndex = 3;
-            this.Chart4Button.Text = "Pointchart";
+            this.Chart4Button.Text = "Point";
             // 
             // FormHome
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1057, 554);
+            this.ClientSize = new System.Drawing.Size(186, 133);
             this.Controls.Add(this.Chart1Button);
             this.Controls.Add(this.Chart2Button);
             this.Controls.Add(this.Chart3Button);
             this.Controls.Add(this.Chart4Button);
             this.Location = new System.Drawing.Point(100, 200);
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormHome";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Home";
+            this.Text = "Chart Home";
             this.ResumeLayout(false);
 
         }
@@ -168,7 +164,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(793, 439);
+            this.ClientSize = new System.Drawing.Size(600, 400);
             this.Controls.Add(this.HomeButton);
             this.Controls.Add(this.chart);
             this.Name = "Chart1";
@@ -176,6 +172,8 @@
             this.Load += new System.EventHandler(this.Chart1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chart)).EndInit();
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.ResumeLayout(false);
         }
 
@@ -252,7 +250,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(793, 439);
+            this.ClientSize = new System.Drawing.Size(600, 400);
             this.Controls.Add(this.HomeButton);
             this.Controls.Add(this.chart);
             this.Name = "Chart2";
@@ -260,14 +258,9 @@
             this.Load += new System.EventHandler(this.Chart2_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chart)).EndInit();
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.ResumeLayout(false);
-            
-
-            // 
-            // HomeButton
-            // 
-            this.HomeButton.Name = "HomeButton";
-            this.HomeButton.Text = "Home";
         }
 
         #endregion
@@ -341,11 +334,11 @@
             this.HomeButton.Text = "Home";
 
             // 
-            // Chart2
+            // Chart3
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(793, 439);
+            this.ClientSize = new System.Drawing.Size(600, 400);
             this.Controls.Add(this.HomeButton);
             this.Controls.Add(this.chart);
             this.Name = "Column";
@@ -353,14 +346,9 @@
             this.Load += new System.EventHandler(this.Chart3_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chart)).EndInit();
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.ResumeLayout(false);
-
-
-            // 
-            // HomeButton
-            // 
-            this.HomeButton.Name = "HomeButton";
-            this.HomeButton.Text = "Home";
         }
 
         #endregion
@@ -426,7 +414,6 @@
             chartArea4.AxisX.Title = "Grade Percentage";
             chartArea4.AxisY.Title = "Number of Students";
          
-
             // 
             // HomeButton
             // 
@@ -437,11 +424,11 @@
             this.HomeButton.Text = "Home";
 
             // 
-            // Chart1
+            // Chart4
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(793, 439);
+            this.ClientSize = new System.Drawing.Size(600, 400);
             this.Controls.Add(this.HomeButton);
             this.Controls.Add(this.chart);
             this.Name = "Chart4";
@@ -449,6 +436,8 @@
             this.Load += new System.EventHandler(this.Chart4_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chart)).EndInit();
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.ResumeLayout(false);
         }
 
