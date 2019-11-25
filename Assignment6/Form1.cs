@@ -1,11 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/********************************************************
+ *  PROGRAM : Assignment6                               *
+ *                                                      *
+ *  PROGRAMMERS : Josue Ballona and Dominykas Karalius  *
+ *  ZID : Z1832823 and Z1809478                         *
+ *                                                      *
+ *  DATE : 11/25/2019 Monday, November 25th 2019        *
+ *                                                      *
+ *                                                      *
+ *  A program that allows the user to choose between 4  *
+ *  charts with different data for each chart. The user *
+ *  may return to the home screen at any time from any  *
+ *  given chart, by simply pressing "Home" or exitting  *
+ *  out the chart window.                               *
+ *******************************************************/
+using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -19,11 +27,14 @@ namespace Assignment6
             InitializeComponent();
             this.FormClosed +=
                new System.Windows.Forms.FormClosedEventHandler(this.FormHome_FormClosed);
+
+            //Event handlers for clicking the chart buttons
             this.Chart1Button.Click += Chart1Button_Click;
             this.Chart2Button.Click += Chart2Button_Click;
             this.Chart3Button.Click += Chart3Button_Click;
             this.Chart4Button.Click += Chart4Button_Click;
 
+            //Centers the chart buttons on the home screen
             Chart1Button.Left = ((Chart1Button.Parent.Width - Chart1Button.Width) / 2) - 10;
             Chart1Button.Top = ((Chart1Button.Parent.Height - Chart1Button.Height) / 2) - 60;
 
@@ -78,6 +89,7 @@ namespace Assignment6
             this.HomeButton.Click += HomeButton_Click;
         }
 
+        //Method for loading the 1st chart
         private void Chart1_Load(object sender, EventArgs e)
         {
             chart.Series.Clear();
@@ -113,6 +125,7 @@ namespace Assignment6
             }
         }
 
+        //If user presses the "X" in chart window, just go back to home screen
         private void Chart1_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.Hide();
@@ -136,6 +149,7 @@ namespace Assignment6
             this.HomeButton.Click += HomeButton_Click;
         }
 
+        //Method for loading the 2nd chart
         private void Chart2_Load(object sender, EventArgs e)
         {
             chart.Series.Clear();
@@ -177,6 +191,8 @@ namespace Assignment6
                 }
             }
         }
+
+        //If user presses the "X" in chart window, just go back to home screen
         private void Chart2_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.Hide();
@@ -200,6 +216,7 @@ namespace Assignment6
             this.HomeButton.Click += HomeButton_Click;
         }
 
+        //Method for loading the 3rd chart
         private void Chart3_Load(object sender, EventArgs e)
         {
             chart.Series.Clear();
@@ -255,6 +272,7 @@ namespace Assignment6
             }
         }
 
+        //If user presses the "X" in chart window, just go back to home screen
         private void Chart3_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.Hide();
@@ -278,6 +296,7 @@ namespace Assignment6
             this.HomeButton.Click += HomeButton_Click;
         }
 
+        //Method for loading the 4th chart
         private void Chart4_Load(object sender, EventArgs e)
         {
             chart.Series.Clear();
@@ -303,7 +322,6 @@ namespace Assignment6
 
                     };
 
-
                     int pointcount = Convert.ToInt32(tokens[0].Trim());
                     for (int i = 1; i <= pointcount * 2; i++)
                     {
@@ -317,6 +335,7 @@ namespace Assignment6
             }
         }
 
+        //If user presses the "X" in chart window, just go back to home screen
         private void Chart4_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.Hide();
