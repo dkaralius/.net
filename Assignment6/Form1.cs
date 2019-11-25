@@ -40,7 +40,7 @@ namespace Assignment6
 
             Chart2Button.Left = ((Chart2Button.Parent.Width - Chart2Button.Width) / 2) - 10;
             Chart2Button.Top = ((Chart2Button.Parent.Height - Chart2Button.Height) / 2) - 35;
-            
+
             Chart3Button.Left = ((Chart3Button.Parent.Width - Chart3Button.Width) / 2) - 10;
             Chart3Button.Top = ((Chart3Button.Parent.Height - Chart3Button.Height) / 2) - 10;
 
@@ -116,7 +116,7 @@ namespace Assignment6
                     int pointcount = Convert.ToInt32(tokens[0].Trim());
                     for (int i = 1; i <= pointcount * 2; i++)
                     {
-                        series1.Points.AddXY(Convert.ToDouble(tokens[i]), Convert.ToDouble(tokens[++i]));                        
+                        series1.Points.AddXY(Convert.ToDouble(tokens[i]), Convert.ToDouble(tokens[++i]));
                     }
                     chart.Invalidate();
                     slacker = inFile.ReadLine();
@@ -161,6 +161,9 @@ namespace Assignment6
             {
                 slacker = inFile.ReadLine();
 
+                System.Drawing.Color[] pieColors = { System.Drawing.Color.Green, System.Drawing.Color.RoyalBlue,
+                System.Drawing.Color.Red, System.Drawing.Color.Silver }; 
+
                 while (slacker != null)
                 {
                     tokens = slacker.Split('\t');
@@ -171,11 +174,12 @@ namespace Assignment6
                         IsVisibleInLegend = true,
                         IsXValueIndexed = false,
                         ChartType = SeriesChartType.Pie,
-                        
+
                     };
 
-                    
+
                     int pointcount = Convert.ToInt32(tokens[0].Trim());
+                    int colorcount = 0;
                     for (int i = 1; i <= pointcount * 2; i++)
                     {
                         series1.Points.AddXY(Convert.ToString(tokens[i]), Convert.ToDouble(tokens[++i]));
@@ -183,7 +187,10 @@ namespace Assignment6
 
                     foreach (DataPoint p in series1.Points)
                     {
-                        p.Label = "#VALX\n#VALY\n#PERCENT";
+                        p.Label = "#PERCENT";
+                        p.LegendText = "#AXISLABEL";
+                        p.Color = pieColors[colorcount];
+                        colorcount++;
                     }
                     chart.Invalidate();
                     slacker = inFile.ReadLine();
